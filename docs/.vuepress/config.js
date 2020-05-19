@@ -1,6 +1,6 @@
 module.exports = {
-  base: '/blog-demo/',
-  title: 'blog-demo',
+  base: '/train-home/',
+  title: 'cd-train-home',
   description: 'Vuepress blog demo',
   head: [
     ['link', { rel: 'icon', href: '/vue-logo.png' }]
