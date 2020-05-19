@@ -7,7 +7,7 @@ module.exports = {
   ],
   themeConfig: {
   	// 你的GitHub仓库
-    repo: 'https://github.com/olewaHHH/blog-demo',
+    repo: 'https://github.com/caidix',
     // 自定义仓库链接文字。
     repoLabel: 'My GitHub',
   	nav: [
