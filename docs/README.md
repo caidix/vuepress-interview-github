@@ -4,7 +4,7 @@ heroImage: /vue-logo.png
 heroText: 前端知识仓库
 tagline: 前端知识点汇总
 actionText: 快速上手 →
-actionLink: /blog/FirstBlog.md
+actionLink: /study/
 features:
 - title: 简洁至上
   details: 以 Markdown 为中心的项目结构，以最少的配置帮助你专注于写作。
