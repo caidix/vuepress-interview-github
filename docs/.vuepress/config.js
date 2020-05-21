@@ -51,6 +51,10 @@ module.exports = {
           title: "Vue",
           children: ["/study/vue/vue.md"],
         },
+        {
+          title: "算法",
+          children: ["/study/algorithm/algorithm.md"],
+        },
       ],
       "/tools/": [
         {
