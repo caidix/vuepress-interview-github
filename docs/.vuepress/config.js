@@ -20,7 +20,6 @@ module.exports = {
     sidebar: "auto",
     search: true,
     searchMaxSuggestions: 10,
-    sidebarDepth: 2,
     displayAllHeaders: true,
     // 你的GitHub仓库
     repo: "https://github.com/caidix",
@@ -43,6 +42,14 @@ module.exports = {
         {
           title: "css相关",
           children: ["/study/css.md"],
+        },
+        {
+          title: "Javascript",
+          children: ["/study/javascript.md"],
+        },
+        {
+          title: "Vue",
+          children: ["/study/vue/vue.md"],
         },
       ],
       "/tools/": [
