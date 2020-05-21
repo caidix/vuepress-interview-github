@@ -70,7 +70,7 @@ function bindEvent() {
 
 ```javascript
 const arr = [1, 2, 3, 4];
-console.log("浪里行舟");
+console.log("adsadsdas");
 arr.length = 0; // 可以直接让数字清空，而且数组类型不变。
 // arr = []; 虽然让a变量成一个空数组,但是在堆上重新申请了一个空数组对象。
 ```
