@@ -85,3 +85,20 @@ export default {
 ````
 
 ## 点击数据上报
+```javascript
+function reportClick(el, binding) {
+   ajax....
+}
+
+export default = (Vue) => {
+  Vue.directive('report', {
+    bind(el, binding, vnode) {
+      el.addEventListener('click', reportClick(el, binding))
+    },
+    unbind(el, binding, vnode) {
+      el.removeEventListener('click', reportClick)
+    }
+  })
+}
+
+```
