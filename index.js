@@ -1,4 +1,4 @@
-var rotate = function(nums, k) {
+var rotate = function (nums, k) {
   let n = nums.length; // 7
   // 定义一个计数器，因为每个元素都需要移动1次，所以当计数器等于数组长度时，即换位完成
   let count = 0;
@@ -20,13 +20,13 @@ var rotate = function(nums, k) {
       let temp = nums[nextIndex];
       console.log(
         "currentIndex:" +
-          currentIndex +
-          ",nextIndex:" +
-          nextIndex +
-          ",temp:" +
-          temp +
-          ",pre:" +
-          pre
+        currentIndex +
+        ",nextIndex:" +
+        nextIndex +
+        ",temp:" +
+        temp +
+        ",pre:" +
+        pre
       );
       // pre要来占next的位置了
       nums[nextIndex] = pre;
@@ -45,3 +45,31 @@ var rotate = function(nums, k) {
 let nums = [1, 2, 3, 4, 5, 6, 7];
 rotate(nums, 3);
 console.log(nums);
+
+const curry = (fn) => {
+  const f = (...allargs) => {
+    return fn.length <= allargs.length ? fn(...allargs) : (...args) => f(...allargs, ...args)
+  }
+  return f
+}
+
+var maxProfit = function (prices) {
+  let left = 0;
+  let right = 1;
+  let total = 0;
+  while (right < prices.length) {
+    if (prices[left] > prices[right]) {
+      left++;
+      right++;
+    } else if (prices[right] < prices[right + 1]) {
+      right++;
+    } else {
+      total = total + (prices[right] - prices[left])
+      left = right + 1;
+      right += 2;
+    }
+  }
+  return total
+};
+
+console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))

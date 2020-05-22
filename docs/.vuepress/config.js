@@ -53,7 +53,7 @@ module.exports = {
         },
         {
           title: "算法",
-          children: ["/study/algorithm/algorithm.md"],
+          children: ["/study/algorithm/algorithm.md","/study/algorithm/leetcode.md","/study/algorithm/func.md"],
         },
       ],
       "/tools/": [
