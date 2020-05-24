@@ -669,6 +669,7 @@ s = "leetcode"
 s = "loveleetcode",
 返回 2.
 
+1. indexOf 与 lastIndexOf 遍历
  ```javascript
  /**
  * @param {string} s
@@ -683,6 +684,32 @@ var firstUniqChar = function(s) {
             return i;
         }
     } 
+    return -1;
+};
+ ```
+
+ 2. json二次遍历
+ 时间空间复杂度为o(n)
+ ```javascript
+ /**
+ * @param {string} s
+ * @return {number}
+ */
+var firstUniqChar = function(s) {
+    if (s.length < 1) {
+        return -1;
+    }
+    let json = {}
+    for(let i = 0; i< s.length; i++) {
+        if (json.hasOwnProperty(s[i])) {
+            json[s[i]] = -1
+        } else {
+            json[s[i]] = i
+        }
+    }
+    for(let i in json) {
+        if (json[i] > -1) {return json[i]}
+    }
     return -1;
 };
  ```
