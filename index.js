@@ -1,4 +1,4 @@
-var rotate = function (nums, k) {
+var rotate = function(nums, k) {
   let n = nums.length; // 7
   // 定义一个计数器，因为每个元素都需要移动1次，所以当计数器等于数组长度时，即换位完成
   let count = 0;
@@ -20,13 +20,13 @@ var rotate = function (nums, k) {
       let temp = nums[nextIndex];
       console.log(
         "currentIndex:" +
-        currentIndex +
-        ",nextIndex:" +
-        nextIndex +
-        ",temp:" +
-        temp +
-        ",pre:" +
-        pre
+          currentIndex +
+          ",nextIndex:" +
+          nextIndex +
+          ",temp:" +
+          temp +
+          ",pre:" +
+          pre
       );
       // pre要来占next的位置了
       nums[nextIndex] = pre;
@@ -48,12 +48,14 @@ console.log(nums);
 
 const curry = (fn) => {
   const f = (...allargs) => {
-    return fn.length <= allargs.length ? fn(...allargs) : (...args) => f(...allargs, ...args)
-  }
-  return f
-}
+    return fn.length <= allargs.length
+      ? fn(...allargs)
+      : (...args) => f(...allargs, ...args);
+  };
+  return f;
+};
 
-var maxProfit = function (prices) {
+var maxProfit = function(prices) {
   let left = 0;
   let right = 1;
   let total = 0;
@@ -64,12 +66,55 @@ var maxProfit = function (prices) {
     } else if (prices[right] < prices[right + 1]) {
       right++;
     } else {
-      total = total + (prices[right] - prices[left])
+      total = total + (prices[right] - prices[left]);
       left = right + 1;
       right += 2;
     }
   }
-  return total
+  return total;
 };
 
-console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))
+// console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))
+var twoSum = function(nums, target) {
+  let json = {};
+  for (let i = 0; i < nums.length; i++) {
+    let res = target - nums[i];
+    console.log(json[res]);
+    if (json.hasOwnProperty(res)) {
+      return [json[res], i];
+    }
+    json[nums[i]] = i;
+  }
+};
+// console.log(twoSum([2, 7, 11, 15], 9))
+
+var twice = function(s) {
+  for (let i = 0, j = s.length - 1; i != j, i + 1 !== j; i++, j--) {
+    [s[i], s[j]] = [s[j], s[i]];
+  }
+};
+// let s = ["H", "a", "n", "n", "a", "h"]
+// twice(s)
+// console.log(s)
+
+"1230".replace(/(-)?(\d*)/, (a, b, c) => {
+  console.log(
+    a,
+    b,
+    parseInt(
+      c
+        .split("")
+        .reverse()
+        .join("")
+    )
+  );
+});
+var firstUniqChar = function(s) {
+  for(let i = 0 ;i < s.length; i++) {
+      if (s.lastIndexOf(s[i]) == i ) {
+          return i;
+      }
+  } 
+  return -1;
+};
+console.log(firstUniqChar("leetcode"))

@@ -1,4 +1,4 @@
-# leetcode 题记
+# 数组篇
 
 ## 1. [删除排序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/)
 给定一个排序数组，你需要在 原地 删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
@@ -246,7 +246,7 @@ var containsDuplicate = function(nums) {
 };
 ```
 
-2. 使用JSON存储数组内的元素，若JSON内存在相同元素则返回。
+2. 使用JSON存储数组内的元素，若JSON内存在相同元素则返回。用空间换时间
 时间复杂度 : O(n)。JSON的查找 和 添加 各自使用 n 次，每个操作耗费常数时间。
 空间复杂度 : O(n)。哈希表占用的空间与元素数量是线性关系。
 ```javascript
@@ -285,7 +285,7 @@ var containsDuplicate = function(nums) {
 };
 ```
 
-## 4. [移动零]
+## 4. [移动零](https://leetcode-cn.com/problems/move-zeroes/solution/tu-jie-shuang-zhi-zhen-by-muyids/)
 给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
 
 示例:
@@ -296,3 +296,393 @@ var containsDuplicate = function(nums) {
 
 必须在原数组上操作，不能拷贝额外的数组。
 尽量减少操作次数。
+
+1. 暴力破解
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function(nums) {
+    for(let i = nums.length-2; i> -1; i--) {
+        if(nums[i] === 0) {
+            nums.push(nums.splice(i, 1))
+        }
+    }
+};
+```
+
+2. 解构法移动次序 （双指针类似）
+依次遍历，将不为0的数字和为0的数字交换位置至0都到尾部
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function(nums) {
+    let j = 0;
+    for(let i = 0; i< nums.length; i++) {
+        if(nums[i] !== 0) {
+            [nums[j++], nums[i]] = [nums[i], nums[j]]
+        }
+    }
+};
+```
+
+3. 双指针
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function(nums) {  
+    for(let i = 0, j = 0; i< nums.length; i++) {
+        if (nums[i] !== 0 ) {
+            if (j<i) {
+                nums[j] = nums[i];
+                nums[i] = 0;   
+            }
+            j++
+        }
+    }
+};
+```
+
+## 5. [只出现一次的数字](https://leetcode-cn.com/problems/single-number/solution/zhi-chu-xian-yi-ci-de-shu-zi-by-leetcode-solution/)
+给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+说明：
+
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+
+示例 1:
+
+输入: [2,2,1]
+输出: 1
+示例 2:
+
+输入: [4,1,2,1,2]
+输出: 4
+
+1.  按位异或
+^运算符跟|类似，但有一点不同的是 如果两个操作位都为1的话，结果产生0。
+
+1的二进制表示为 0 0 0 0 0 0 1
+
+3的二进制表示为 0 0 0 0 0 1 1
+
+所以 1 ^ 3的结果为2
+任何数和 0 做异或运算，结果仍然是原来的数
+任何数和其自身做异或运算，结果是 0。
+异或运算满足交换律和结合律。
+时间复杂度：O(n) 其中 n 是数组长度。只需要对数组遍历一次。
+
+空间复杂度：O(1)。
+
+```javascript
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var singleNumber = function(nums) {
+    let res = nums[0]
+    for(let i = 1 ; i< nums.length;i++) {
+        res = res^nums[i]
+    }
+    return res
+};
+```
+
+2. json存储并添加每一项出现的次数，最后遍历json找出只有一次的那个值
+
+## 6. [加一](https://leetcode-cn.com/problems/plus-one/)
+
+给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+
+你可以假设除了整数 0 之外，这个整数不会以零开头。
+
+示例 1:
+
+输入: [1,2,3]
+输出: [1,2,4]
+解释: 输入数组表示数字 123。
+示例 2:
+
+输入: [4,3,2,1]
+输出: [4,3,2,2]
+解释: 输入数组表示数字 4321。
+```javascript
+/**
+ * @param {number[]} digits
+ * @return {number[]}
+ */
+var plusOne = function(digits) {
+    let i = digits.length -1;
+    while(i> -1) {
+        if (digits[i] == 9) {
+            digits[i] = 0;
+            if(i == 0) {
+                return [1,...digits];
+            }
+            i--;
+        } else {
+            digits[i]++;
+            return digits
+        }
+    }
+};
+```
+
+## 7. [两数之和](https://leetcode-cn.com/problems/plus-one/)
+给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素不能使用两遍。
+
+ 
+
+示例:
+
+给定 nums = [2, 7, 11, 15], target = 9
+
+因为 nums[0] + nums[1] = 2 + 7 = 9
+所以返回 [0, 1]
+
+1. 暴力解法 
+使用两次for循环，分别针对单个元素去查找数组内是否有元素与其之和等于target。
+时间复杂度为O(n^2)
+空间复杂度为O(1) 用了个数个元素
+
+2. target减去元素判断差值是否存在数组
+时间复杂度为最多O(n^2)
+空间复杂度为O(1)
+```javascript
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
+    let i = nums.length -1;
+    while(i > -1) {
+        let j = nums.indexOf(target - nums[i])
+        if (j > -1 && j != i) {
+            return [j, i]
+        }
+        i--;
+    }
+    return []
+};
+```
+
+3. 一次哈希表 - 空间换时间
+空间复杂度为O(n)所需的额外空间取决于哈希表中存储的元素数量，该表中存储了 n 个元素。
+时间复杂度O(n)
+```javascript
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
+  let json = {};
+  for (let i = 0; i < nums.length; i++) {
+    let res = target - nums[i];
+    if (json.hasOwnProperty(res)) {
+      return [json[res], i];
+    }
+    json[nums[i]] = i;
+  }
+};
+```
+
+
+## 8. [有效的数独]
+判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。
+
+数字 1-9 在每一行只能出现一次。
+数字 1-9 在每一列只能出现一次。
+数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Sudoku-by-L2G-20050714.svg/250px-Sudoku-by-L2G-20050714.svg.png" style="height: 250px; width: 250px;">
+
+上图是一个部分填充的有效的数独。
+数独部分空格内已填入了数字，空白格用 '.' 表示。
+
+示例 1:
+
+输入:
+[
+  ["5","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: true
+示例 2:
+
+输入:
+[
+  ["8","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: false
+解释: 除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。
+     但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
+说明:
+
+一个有效的数独（部分已被填充）不一定是可解的。
+只需要根据以上规则，验证已经填入的数字是否有效即可。
+给定数独序列只包含数字 1-9 和字符 '.' 。
+给定数独永远是 9x9 形式的。
+
+
+
+# 字符串篇
+
+## 1. 反转字符串
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。
+
+ 
+
+示例 1：
+
+输入：["h","e","l","l","o"]
+输出：["o","l","l","e","h"]
+示例 2：
+
+输入：["H","a","n","n","a","h"]
+输出：["h","a","n","n","a","H"]
+
+```javascript
+/**
+ * @param {character[]} s
+ * @return {void} Do not return anything, modify s in-place instead.
+ */
+var reverseString = function(s) {
+    s.reverse()
+};
+```
+
+从中间入手
+```javascript
+var reverseString = function(s) {
+    for(let i = 0, j = s.length -1; i<j;i++, j--) {
+        [s[i],s[j]] = [s[j],s[i]]
+    }
+};
+```
+
+## 2. 整数反转
+给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+
+示例 1:
+
+输入: 123
+输出: 321
+ 示例 2:
+
+输入: -123
+输出: -321
+示例 3:
+
+输入: 120
+输出: 21
+注意:
+
+假设我们的环境只能存储得下 32 位的有符号整数，则其数值范围为 [−231,  231 − 1]。请根据这个假设，如果反转后整数溢出那么就返回 0。
+
+1. 想试着用一下replace
+```javascript
+var reverse = function(x) {
+  let resp;
+  `${x}`.replace(/(-)?(\d*)/, (a, b, c) => {
+    let res = parseInt(
+      c
+        .split("")
+        .reverse()
+        .join("")
+    );
+    if (res > Math.pow(2, 31) - 1 || res < -Math.pow(2, 31)) return (resp = 0);
+    resp = b ? b + res : res;
+  });
+  return resp;
+};
+```
+
+2. 转换为字符串后反转再转回int判断
+```
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var reverse = function(x) {
+    let sign = Math.sign(x)
+    let res = (Math.abs(x) + '').split('').reverse().join('') * sign
+    if (res > Math.pow(2, 31) - 1 || res < Math.pow(2, 31) * -1) res = 0
+    return res
+};
+```
+
+3. 从末位开始按位取，使用新的内存空间存储
+```javascript
+var reverse = function(x) {
+  let res = 0;
+  while(x != 0) {
+      let lastValue = x%10;
+      res = res * 10 + lastValue;
+      if (res > Math.pow(2, 31) - 1 || res < -Math.pow(2, 31)) {
+        return 0;
+      }
+      x =  res > 0 ? Math.floor(x/10) : Math.ceil(x/10)
+  }
+  return res
+};
+```
+
+## 3. 字符串中的第一个唯一字符
+给定一个字符串，找到它的第一个不重复的字符，并返回它的索引。如果不存在，则返回 -1。
+
+案例:
+
+s = "leetcode"
+返回 0.
+
+s = "loveleetcode",
+返回 2.
+
+ ```javascript
+ /**
+ * @param {string} s
+ * @return {number}
+ */
+var firstUniqChar = function(s) {
+    if (s.length < 1) {
+        return -1;
+    }
+    for(let i = 0 ;i < s.length; i++) {
+        if (s.lastIndexOf(s[i]) == s.indexOf(s[i]) ) {
+            return i;
+        }
+    } 
+    return -1;
+};
+ ```
