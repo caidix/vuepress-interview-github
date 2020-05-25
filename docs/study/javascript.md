@@ -106,3 +106,12 @@ arr.length = 0; // 可以直接让数字清空，而且数组类型不变。
       }
       t = null;
       ```
+
+
+## 类型
+Number, String, Object, Null, Boolean, Symbol, undefined, bigInt,其中Object为复杂数据类型
+
+## 隐式转换规则
+
+## 精确获取页面元素位置的方式
+1. getBoundingClientRect()

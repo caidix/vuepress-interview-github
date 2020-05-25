@@ -43,8 +43,8 @@ var rotate = function (nums, k) {
   }
 };
 let nums = [1, 2, 3, 4, 5, 6, 7];
-rotate(nums, 3);
-console.log(nums);
+// rotate(nums, 3);
+// console.log(nums);
 
 const curry = (fn) => {
   const f = (...allargs) => {
@@ -72,4 +72,57 @@ var maxProfit = function (prices) {
   return total
 };
 
-console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))
+// console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))
+
+var user = [
+  {
+    id: 1, name: 'a'
+  },
+  {
+    id: 2, name: 'a'
+  },
+  {
+    id: 3, name: 'b'
+  },
+  {
+    id: 4, name: 'v'
+  },
+  {
+    id: 5, name: 'v'
+  },
+]
+
+// Array.prototype.unique = function () {
+//   let arr = Array.prototype.slice.call(this)
+//   return arr.reduce((prev, next) => {
+//     if (!prev.includes(next.name)) {
+//       prev.push(next.name)
+//     }
+//     return prev
+//   }, [])
+// }
+// console.log(user.unique())
+
+var isAnagram = function (s, t) {
+  if (s.length != t.length) {
+    return false;
+  }
+  let json = {}
+  for (let i of s) {
+    if (json[i]) {
+      json[i]++
+    } else {
+      json[i] = 1
+    }
+  }
+  for (let i of t) {
+    json[i]--;
+    console.log(json)
+    if (isNaN(json[i]) || json[i] < 0) {
+      return false
+    }
+  }
+  return true
+};
+
+console.log(isAnagram("a", "b"))
