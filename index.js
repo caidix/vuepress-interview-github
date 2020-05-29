@@ -125,4 +125,15 @@ var isAnagram = function (s, t) {
   return true
 };
 
-console.log(isAnagram("a", "b"))
+// console.log(isAnagram("a", "b"))
+let i = new Array(10000000).fill(1)
+let time = 0
+let start = new Date().getTime()
+// for (let u = 0; u < i.length; u++) {
+//   time++;
+// }
+i.forEach(element => {
+  time++;
+});
+let end = new Date().getTime()
+console.log(end - start, time)

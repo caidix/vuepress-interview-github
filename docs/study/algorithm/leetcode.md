@@ -279,6 +279,7 @@ var containsDuplicate = function(nums) {
 ```
 
 4. set去重比对
+用时短 耗费空间
 ```javascript
 var containsDuplicate = function(nums) {
     return new Set(nums).size != nums.length;
