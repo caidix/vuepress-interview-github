@@ -125,15 +125,31 @@ var isAnagram = function (s, t) {
   return true
 };
 
-// console.log(isAnagram("a", "b"))
-let i = new Array(10000000).fill(1)
-let time = 0
-let start = new Date().getTime()
-// for (let u = 0; u < i.length; u++) {
-//   time++;
-// }
-i.forEach(element => {
-  time++;
-});
-let end = new Date().getTime()
-console.log(end - start, time)
+function bubbleSort(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    for (let j = i; j > 0; j--) {
+      if (arr[j] < arr[j - 1]) {
+        [arr[j - 1], arr[j]] = [arr[j], arr[j - 1]]
+      }
+    }
+  }
+  console.log(arr)
+}
+
+bubbleSort([1, 5, 23, 11, 2, 4, 6, 2])
+function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  let right = [], left = [], keys = arr.shift();
+  for (let value of arr) {
+    if (value > keys) {
+      right.push(value)
+    } else {
+      left.push(value);
+    }
+  }
+  return quickSort(left).concat(keys, quickSort(right));
+}
+
+var arr = [3, 3, -5, 6, 0, 2, -1, -1, 3];
+console.log(arr);
+console.log(quickSort(arr));
