@@ -41,3 +41,101 @@
 如果以上都没有，就会阻塞住渲染流程直到 JS 执行完毕。
 CSSOM 树和 DOM 树构建完成后会开始生成 Render 树，这一步就是确定页面元素的布局、样式等等诸多方面的东西
 在生成 Render 树的过程中，浏览器就开始调用GPU 绘制，合成图层，将内容显示在屏幕上了。
+一个完整的渲染流程大致可总结为如下：
+
+渲染进程将 HTML 内容转换为能够读懂的DOM 树结构。
+渲染引擎将 CSS 样式表转化为浏览器可以理解的styleSheets，计算出 DOM 节点的样式。
+创建布局树，并计算元素的布局信息。
+对布局树进行分层，并生成分层树。
+为每个图层生成绘制列表，并将其提交到合成线程。
+合成线程将图层分成图块，并在光栅化线程池中将图块转换成位图。
+合成线程发送绘制图块命令DrawQuad给浏览器进程。
+浏览器进程根据 DrawQuad 消息生成页面，并显示到显示器上。
+
+相关概念
+- 构建DOM树：因为浏览器无法直接理解和使用 HTML，所以需要将 HTML 转换为浏览器能够理解的结构——DOM 树。
+- 构建CSSOM树： 首先，将css转换为浏览器能够理解的结构（styleSheets），并将属性里所有的值转换为渲染引擎更容易理解的、标准化的计算值（1em = 32px),从而计算出dom树中每个节点的具体样式。生成一个完整的布局树。
+- 重排（更新了元素的几何属性）如果你通过 JavaScript 或者 CSS 修改元素的几何位置属性，例如改变元素的宽度、高度等，那么浏览器会触发重新布局，解析之后的一系列子阶段，这个过程就叫重排。无疑，重排需要更新完整的渲染流水线，所以开销也是最大的。
+- 重绘（更新元素的绘制属性）如果修改了元素的背景颜色，那么布局阶段将不会被执行，因为并没有引起几何位置的变换，所以就直接进入了绘制阶段，然后执行之后的一系列子阶段，这个过程就叫重绘。相较于重排操作，重绘省去了布局和分层阶段，所以执行效率会比重排操作要高一些。
+
+
+## 跨域攻击
+1. CSRF跨站请求伪造。通过钓鱼网站，嵌入真实网站的请求。比如用户在进入钓鱼网站之前登陆了真实的银行等站点并把COOKIE保存了起来，这时候钓鱼网站把请求发出去的时候就会把cookie也一并带上，另一端以为是正常的请求，就执行。
+
+
+## 跨域
+1. jsonp
+
+
+2. cors跨域资源共享（Cross-origin resource sharing）在发生跨域请求之前，发送了一个OPTIONS请求去询问服务器是否允许接下来的跨域请求
+OPTIONS里有几个字段： 
+- Origin 发起请求原来的域
+- Access-Control-Request-Method: 将要发起跨域的请求方式
+- Access-Control-Request-Headers: 将要发起的跨域请求中包含的请求头字段
+
+服务器在响应字段中来表明是否允许这个跨域请求，浏览器收到后检查如果不符合要求，就拒绝后面的请求。
+- Access-Control-Allow-Origin:允许哪些域来访问（*为所有域名下的请求）
+- Access-Control-Allow-Methods:允许哪些请求方式
+- Access-Control-Allow-Headers: 允许那些请求头字段
+- Access-Control-Allow-Credentials:是否允许携带cookie
+- Access-Control-Max-Age： 服务器返回两者可通讯的有效期，在有效期内不需要再调用OPTIONS请求询问。
+对此，chrome还做了优化：
+如果是一个简单请求，那就直接发起请求，只需在请求中加入Origin字段表明自己来源，在响应中检查Access-Control-Allow-Origin，如果不符合要求就报错，不需要再单独询问了。
+简单请求就是请求方式属于HEAD、GET、POST三者之一，请求头只有下面这些，不符合要求的就是非简单请求，就得询问了”
+- Accept
+- Accept-Language
+- Content-Language
+- Last-Event-ID
+- Content-Type：(application/x-www-form-urlencoded、multipart/form-data、text/plain)
+
+cors简单跨域请求代码示例
+```javascript
+var xhr = XMLHttpRequest();
+xhr.withCredentials = true;
+xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+xhr.send('user=adsad');
+xhr.onreadystatechenge=function() {
+  if(xhr.readyState==4 && xhr.status ===200) {
+    alert(xhr.responseText)
+  }
+}
+```
+cors跨域的优点
+- 支持所有类型的http请求，功能完善
+- 通过onerror事件监听进行调用错误处理
+- 通过Access-Control-Allow-Origin进行资源访问授权
+
+cors跨域缺点
+- 主流（ie10）浏览器都支持cors，但ie8和ie9需要使用XDomainRequest对象进行兼容。i7以下不兼容
+
+3. 服务器代理
+顾名思义在发送跨域请求时，后端进行代理中转请求到服务器端，然后获取数据返回给前端，适用以下场景：
+- 针对IE7及以下浏览器摒弃flash插件的情况，配置代理接口与前端页面同源，并中转目标服务器接口，则ajax请求不存在跨域
+- 外网前端页面无法访问内网接口，配置代理接口允许前端页面访问，并中转内网接口，则外网前端页面可以跨域访问内网接口
+
+缺点就是后端需要一定的改造工作量
+
+## 前端跨域通信解决方案
+1. document.domain + iframe
+适用于主域相同，子域不同的前端通信跨域场景，比如a.cd.top和b.cd.top 两者有着相同的主域cd.top. a嵌套b，再通过js设置document.domain为主域cd.top,则两个页面满足了同源策略，从而实现了跨域通信。
+```html
+A页面
+<iframe id="iframe" src="b.cd.top"></iframe>
+<script>
+  document.domain="cd.top";
+  var windowB = document.getElementById('iframe').contentWindow;
+  alert('B页面变量' + windowB.user)
+</script>
+
+B页面
+<script>
+  document.domain="cd.top"
+  var user = 'CD'
+</script>
+``` 
+
+优点：实现逻辑简单，不需额外的中转页面
+缺点：仅适用于主域相同，子域不同的前端通信跨域场景。
+
+2. location.hash + iframe
+3. window.name+iframe
