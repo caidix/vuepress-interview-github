@@ -68,6 +68,10 @@ module.exports = {
         {
           title: "react工具",
           children: ["/tools/react-tool.md"],
+        },
+        {
+          title: "webpack",
+          children: ["/tools/webpack.md"],
         }
       ],
     },
