@@ -19,8 +19,8 @@
 
 ### url请求过程
 - 浏览器进程会通过进程间通信（IPC）把URL请求发送给网络进程，网络进程接收到请求后，会先去查找本地缓存，如果有本地缓存资源，则直接返回资源给浏览器进程。如果没有找到，那么直接
-进入网络请求流程。第一步是进行DNS域名解析，将域名的所属的IP解析出来，如果是HTTPS协议，还需要建立TLS链接。
-- 当通过IP地址和服务器建立了TCP连接之后，浏览器端会构建请求行、请求头等信息，并把域名相对应的cookie等数据附加在请求头中，然后向服务器发送构建的请求信息。
+进入网络请求流程。第一步是进行DNS域名解析，将域名的所属的IP解析出来,如果一个域名已经解析过，那会把解析的结果缓存下来，下次处理直接走缓存，不需要经过 DNS解析。如果是HTTPS协议，还需要建立TLS链接。
+- 建立TCP连接，Chrome 在同一个域名下要求同时最多只能有 6 个 TCP 连接，超过 6 个的话剩下的请求就得等待。当通过IP地址和服务器建立了TCP连接之后，浏览器端会构建请求行、请求头和请求体，并把域名相对应的cookie等数据附加在请求头中，然后向服务器发送构建的请求信息。
 - 服务器接收到请求信息后，根据请求信息生成响应数据（包括响应头、响应行、响应体等信息），并发给网络进程。网络进程接受到了响应行和 响应头后，开始解析响应头的内容。
 1. 重定向：在接收到服务器返回的响应头后，网络进程开始解析响应头。 如果发现返回的状态码是301或是302，说明服务器需要浏览器重定向至其他的URL，这时候网络进程会去响应头中拿到重定向的数据Location,然后重新发起HTTP或者HTTPS请求，然后重新走url的请求过程。直到响应行的状态码是200的时候，则表示浏览器可以继续处理该请求。
 2. 响应数据类型处理：当处理了跳转信息之后，浏览器会根据响应头中的Content-Type来决定如何显示响应体的内容。若返回的是字节流类型的，浏览器一般会按照下载类型来处理该需求，
@@ -139,3 +139,108 @@ B页面
 
 2. location.hash + iframe
 3. window.name+iframe
+
+
+## 浏览器的缓存机制
+[深入理解缓存机制](https://www.jianshu.com/p/54cc04190252)
+
+
+## 说一说浏览器的本地存储
+### cookie
+cookie的诞生本身是为了弥补http在状态管理上的不足。HTTP协议是一个无状态协议，客户端向服务器发请求，服务器返回响应，故事就这样结束了，但是下次发请求如何让服务端知道客户端是谁呢？这种情况下，就有了cookie
+Cookie 本质上就是浏览器里面存储的一个很小的文本文件，内部以键值对的方式来存储。当在同一个域名下发送请求时，都会携带相同的cookie，服务器可以根据拿到的cookie进行解析，从而拿到客户端的状态。可以说cookie的作用是用来做状态存储的。cookie设置时可以为其设置过期时间。
+缺点：
+- 容量小，只有4kb，只能用来存储少量的信息。
+- 性能可能会有浪费。cookie对应域名存储，不管域名下面的某一个地址是否需要这些cookie，都会携带上完整的cookie，这样随着请求数量的增多，其实会造成巨大的性能浪费的，因为携带和许多不必要的内容。
+- 安全问题。由于 Cookie 以纯文本的形式在浏览器和服务器中传递，很容易被非法用户截获，然后进行一系列的篡改，在 Cookie 的有效期内重新发送给服务器，这是相当危险的。另外，在HttpOnly为 false 的情况下，Cookie 信息能直接通过 JS 脚本来读取。
+
+### localStorage
+localStorage和cookie一样，针对在同一个域名下，会存储一段相同的localStorage。
+localStorage 的容量上限为5M，并且为持久存储。且只存在于客户端，不参与服务器端的通信，避免了cookie那样带来的安全性能问题。
+可以使用localStorage.setItem getItem等方法进行操作。
+
+### sessionStorage
+容量上限也为5M，但是其为会话级别存储，页面关闭之后，这部分的sessionStorage就不存在了
+只存在客户端，默认不参与与服务端的通信。
+
+### IndexDB
+IndexDB是运行在浏览器中的非关系型数据库, 本质上是数据库，绝不是和刚才WebStorage的 5M 一个量级，理论上这个容量是没有上限的。
+
+关于它的使用，本文侧重原理，而且 MDN 上的教程文档已经非常详尽，这里就不做赘述了，感兴趣可以看一下使用文档。
+
+接着我们来分析一下IndexDB的一些重要特性，除了拥有数据库本身的特性，比如支持事务，存储二进制数据，还有这样一些特性需要格外注意：
+
+- 键值对存储。内部采用对象仓库存放数据，在这个对象仓库中数据采用键值对的方式来存储。
+- 异步操作。数据库的读写属于 I/O 操作, 浏览器中对异步 I/O 提供了支持。
+- 受同源策略限制，即无法访问跨域的数据库。
+
+
+## 图片懒加载
+方案一:clientHeight、scrollTop 和 offsetTop
+首先给图片一个占位资源:
+```javascript
+<img src="default.jpg" data-src="http://www.xxx.com/target.jpg" /></img>
+接着，通过监听 scroll 事件来判断图片是否到达视口:
+
+let img = document.document.getElementsByTagName("img");
+let count = 0;//计数器，从第一张图片开始计
+
+lazyload();//首次加载别忘了显示图片
+
+window.addEventListener('scroll', lazyload);
+
+function lazyload() {
+  let viewHeight = document.documentElement.clientHeight;//视口高度
+  let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;//滚动条卷去的高度
+  for(let i = count; i <num; i++) {
+    // 元素现在已经出现在视口中
+    if(img[i].offsetTop < scrollHeight + viewHeight) {
+      if(img[i].getAttribute("src") !== "default.jpg") continue;
+      img[i].src = img[i].getAttribute("data-src");
+      count ++;
+    }
+  }
+}
+```
+当然，最好对 scroll 事件做节流处理，以免频繁触发:
+
+// throttle函数我们上节已经实现
+window.addEventListener('scroll', throttle(lazyload, 200));
+#方案二：getBoundingClientRect
+现在我们用另外一种方式来判断图片是否出现在了当前视口, 即 DOM 元素的 getBoundingClientRect API。
+
+上述的 lazyload 函数改成下面这样:
+```javascript
+function lazyload() {
+  for(let i = count; i <num; i++) {
+    // 元素现在已经出现在视口中
+    if(img[i].getBoundingClientRect().top < document.documentElement.clientHeight) {
+      if(img[i].getAttribute("src") !== "default.jpg") continue;
+      img[i].src = img[i].getAttribute("data-src");
+      count ++;
+    }
+  }
+}
+```
+#方案三: IntersectionObserver
+这是浏览器内置的一个API，实现了监听window的scroll事件、判断是否在视口中以及节流三大功能。
+
+我们来具体试一把：
+```javascript
+let img = document.document.getElementsByTagName("img");
+
+const observer = new IntersectionObserver(changes => {
+  //changes 是被观察的元素集合
+  for(let i = 0, len = changes.length; i < len; i++) {
+    let change = changes[i];
+    // 通过这个属性判断是否在视口中
+    if(change.isIntersecting) {
+      const imgElement = change.target;
+      imgElement.src = imgElement.getAttribute("data-src");
+      observer.unobserve(imgElement);
+    }
+  }
+})
+observer.observe(img);
+```
+这样就很方便地实现了图片懒加载，当然这个IntersectionObserver也可以用作其他资源的预加载，功能非常强大。
