@@ -1,4 +1,4 @@
-## JavaScript 中的垃圾回收和内存泄漏
+## 1. JavaScript 中的垃圾回收和内存泄漏
 
 > 由于字符串、对象和数组没有固定大小，当他们的大小已知时，才能对他们进行动态的存储分配。JavaScript 程序每次创建字符串、数组或对象时，解释器都必须分配内存来存储那个实体。只要像这样动态地分配了内存，最终都要释放这些内存以便他们能够被再用，否则，JavaScript 的解释器将会消耗完系统中所有可用的内存，造成系统崩溃。
 
@@ -108,12 +108,12 @@ arr.length = 0; // 可以直接让数字清空，而且数组类型不变。
       ```
 
 
-## 类型
+## 2. 类型
 javascript的数据类型一共有八种
 Number, String, Object, Null, Boolean, Symbol, Undefined, bigInt,其中Object为复杂数据类型
 typeof 检测null类型为object。
 
-## js的数据是如何存储的
+## 3. js的数据是如何存储的
 在js的执行过程中，主要有三种类型内存空间。分别是代码空间、栈空间和堆空间。代码空间主要用于存储可执行代码。
 栈空间用于存储执行上下文，当一段代码执行时，需要先编译，并创建执行上下文，然后按照顺序执行代码，当判断到 一个变量的值为引用类型时，js引擎不会直接将该对象存放到环境变量里，而是将他分配到堆空间里面去，并为变量分配一个指向该堆空间的地址，当js需要访问该数据的时候，是通过栈中的引用地址来访问的。
 那么为什么其他变量会把数据存在栈中，引用类型却要放在堆中？
@@ -148,13 +148,13 @@ console.log(bar.getName())
 5. 当执行到 foo 函数时，闭包就产生了；当 foo 函数执行结束之后，返回的 getName 和 setName 方法都引用“clourse(foo)”对象，所以即使 foo 函数退出了，“clourse(foo)”依然被其内部的 getName 和 setName 方法引用。所以在下次调用bar.setName或者bar.getName时，创建的执行上下文中就包含了“clourse(foo)”。
 总的来说，产生闭包的核心有两步：第一步是需要预扫描内部函数；第二步是把内部函数引用的外部变量保存到堆中。
 
-## 隐式转换规则
+## 4. 隐式转换规则
 
-## 精确获取页面元素位置的方式
+## 5. 精确获取页面元素位置的方式
 1. getBoundingClientRect()
 
 
-## for while forEach map for of 谁的效率更高
+## . for while forEach map for of 谁的效率更高
 forEach map for of这类ES6的方法效率并没有for while传统语法更快，
 传统的for循环为: 
 ```javascript
@@ -211,7 +211,7 @@ function ArrayForEach(callbackfn/*, thisArg*/) {
 map()按照原始数组元素顺序依次处理元素；forEach()遍历数组的每个元素，将元素传给回调函数。
 所以说map的执行效率还要慢于forEach
 
-## 如何转换一个类数组对象，大致原理是怎么样的
+## 7. 如何转换一个类数组对象，大致原理是怎么样的
 类数组对象是一个具有长度的对象。
 要将一个类数组对象转换为一个真正的数组，必须具备以下条件：
 （1）该类数组对象必须具有length属性，用于指定数组的长度。如果没有length属性，那么转换后的数组是一个空数组。
@@ -296,3 +296,7 @@ if (!Array.from) {
   }());
 }
 ```
+
+## 8. 如何获取精度更高的时间
+- 浏览器使用 performance.now() 可以获取到 performance.timing.navigationStart 到当前时间之间的微秒数
+- Node.js 使用 process.hrtime 返回一个数组，其中第一个元素的时间以秒为单位，第二个元素为剩余的纳秒
