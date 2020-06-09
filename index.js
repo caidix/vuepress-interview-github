@@ -43,8 +43,8 @@ var rotate = function(nums, k) {
   }
 };
 let nums = [1, 2, 3, 4, 5, 6, 7];
-rotate(nums, 3);
-console.log(nums);
+// rotate(nums, 3);
+// console.log(nums);
 
 const curry = (fn) => {
   const f = (...allargs) => {
@@ -119,101 +119,84 @@ var firstUniqChar = function(s) {
 };
 console.log(firstUniqChar("leetcode"));
 
-/**
- * @param {string} str
- * @return {number}
- */
-var myAtoi = function(str) {
-  // 自动机类
-  class Automaton {
-    constructor() {
-      // 执行阶段，默认处于开始执行阶段
-      this.state = "start";
-      // 正负符号，默认是正数
-      this.sign = 1;
-      // 数值，默认是0
-      this.answer = 0;
-      /*
-      关键点：
-      状态和执行阶段的对应表
-      含义如下：
-      [执行阶段, [空格, 正负, 数值, 其他]]
-      */
-      this.map = new Map([
-        ["start", ["start", "signed", "in_number", "end"]],
-        ["signed", ["end", "end", "in_number", "end"]],
-        ["in_number", ["end", "end", "in_number", "end"]],
-        ["end", ["end", "end", "end", "end"]],
-      ]);
-    }
+// console.log(maxProfit([2, 1, 4, 5, 2, 9, 7,12]))
 
-    // 获取状态的索引
-    getIndex(char) {
-      if (char === " ") {
-        // 空格判断
-        return 0;
-      } else if (char === "-" || char === "+") {
-        // 正负判断
-        return 1;
-      } else if (typeof Number(char) === "number" && !isNaN(char)) {
-        // 数值判断
-        return 2;
-      } else {
-        // 其他情况
-        return 3;
-      }
-    }
+var user = [
+  {
+    id: 1, name: 'a'
+  },
+  {
+    id: 2, name: 'a'
+  },
+  {
+    id: 3, name: 'b'
+  },
+  {
+    id: 4, name: 'v'
+  },
+  {
+    id: 5, name: 'v'
+  },
+]
 
-    /*
-    关键点：
-    字符转换执行函数
-    */
-    get(char) {
-      /*
-      易错点：
-      每次传入字符时，都要变更自动机的执行阶段
-      */
-      this.state = this.map.get(this.state)[this.getIndex(char)];
+// Array.prototype.unique = function () {
+//   let arr = Array.prototype.slice.call(this)
+//   return arr.reduce((prev, next) => {
+//     if (!prev.includes(next.name)) {
+//       prev.push(next.name)
+//     }
+//     return prev
+//   }, [])
+// }
+// console.log(user.unique())
 
-      if (this.state === "in_number") {
-        /*
-        小技巧：
-        在JS中，对字符串类型进行减法操作，可以将得到一个数值型（Number）的值
-
-        易错点：
-        本处需要利用括号来提高四则运算的优先级
-        */
-        this.answer = this.answer * 10 + (char - 0);
-
-        /*
-        易错点：
-        在进行负数比较时，需要将INT_MIN变为正数
-        */
-        this.answer =
-          this.sign === 1
-            ? Math.min(this.answer, Math.pow(2, 31) - 1)
-            : Math.min(this.answer, -Math.pow(-2, 31));
-      } else if (this.state === "signed") {
-        /*
-        优化点：
-        对于一个整数来说，非正即负，
-        所以正负号的判断，只需要一次。
-        故，可以降低其判断的优先级
-        */
-        this.sign = char === "+" ? 1 : -1;
-      }
+var isAnagram = function (s, t) {
+  if (s.length != t.length) {
+    return false;
+  }
+  let json = {}
+  for (let i of s) {
+    if (json[i]) {
+      json[i]++
+    } else {
+      json[i] = 1
     }
   }
-
-  // 生成自动机实例
-  let automaton = new Automaton();
-
-  // 遍历每个字符
-  for (let char of str) {
-    // 依次进行转换
-    automaton.get(char);
+  for (let i of t) {
+    json[i]--;
+    console.log(json)
+    if (isNaN(json[i]) || json[i] < 0) {
+      return false
+    }
   }
-
-  // 返回值，整数 = 正负 * 数值
-  return automaton.sign * automaton.answer;
+  return true
 };
+
+function bubbleSort(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    for (let j = i; j > 0; j--) {
+      if (arr[j] < arr[j - 1]) {
+        [arr[j - 1], arr[j]] = [arr[j], arr[j - 1]]
+      }
+    }
+  }
+  console.log(arr)
+}
+
+bubbleSort([1, 5, 23, 11, 2, 4, 6, 2])
+function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  let right = [], left = [], keys = arr.shift();
+  for (let value of arr) {
+    if (value > keys) {
+      right.push(value)
+    } else {
+      left.push(value);
+    }
+  }
+  return quickSort(left).concat(keys, quickSort(right));
+}
+
+var arr = [3, 3, -5, 6, 0, 2, -1, -1, 3];
+console.log(arr);
+console.log(quickSort(arr));
