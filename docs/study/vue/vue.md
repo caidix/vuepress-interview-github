@@ -32,3 +32,32 @@ vue采用数据劫持结合发布订阅者模式 通过object. defineProperty()�
 - 多线程打包happypack(happypack/loader?id=happy-eslint-js)
 - splitChunk 抽离公共文件
 - sourceMap优化(dev:cheap-module-source-map, prod:source-map)
+
+## 3.css样式穿透
+由于scoped属性的样式隔离，修改不到第三方组件的样式，需要做样式穿透（在css预处理器中使用才生效）
+
+- less使用/deep/
+```css
+<style scoped lang="less">
+.content /deep/ .el-button {
+  height:20px;
+}
+</style>
+```
+
+- scss使用 ::v-deep
+```scss
+<style scoped lang="scss">
+.content ::v-deep .el-button {
+  height:20px;
+}
+</style>
+```
+
+- stylus使用 >>>
+```scss
+<style scoped lang="stylus">
+.content >>> .el-button {
+  height:20px;
+}
+</style>

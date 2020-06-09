@@ -107,3 +107,10 @@ p{font-size:10px;-webkit-transform:scale(0.8);}
 
 ## 如果需要手动写动画，你认为最小时间间隔是多久，为什么？
 多数显示器默认频率是60Hz，即1秒刷新60次，所以理论上最小间隔为1/60＊1000ms ＝ 16.7ms。
+
+## flex: 0 1 auto是什么意思
+flex:0 1 auto代表弹性盒子的默认值，表示以下三者的简写
+- flex-grow:放大比例。默认为0，即如果存在剩余空间，也不放大。
+- flex-shrink:缩小比例，默认为1，即如果空间不足，该项目将缩小。
+- flex-basis:分配多余空间之前占据的主轴空间，用来设置元素的宽度。如果设置了width和flex-basis，那么flex-basis会覆盖width值。
+

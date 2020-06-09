@@ -33,7 +33,7 @@ module.exports = {
         "",
         {
           title: "网络",
-          children: ["/study/network.md"],
+          children: ["/study/network/network.md"],
         },
         {
           title: "HTML相关",
@@ -44,8 +44,8 @@ module.exports = {
           children: ["/study/css.md"],
         },
         {
-          title: "Javascript",
-          children: ["/study/javascript.md"],
+          title: "Javascript/Typescript",
+          children: ["/study/javascript/javascript.md", "/study/javascript/typescript.md"],
         },
         {
           title: "Vue",
