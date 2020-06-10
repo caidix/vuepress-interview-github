@@ -56,6 +56,10 @@ module.exports = {
           children: ["/study/node.md"],
         },
         {
+          title: "Git",
+          children: ["/study/git/git.md"],
+        },
+        {
           title: "算法",
           children: ["/study/algorithm/algorithm.md","/study/algorithm/leetcode.md","/study/algorithm/func.md"],
         },
