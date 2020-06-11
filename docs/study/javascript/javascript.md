@@ -300,3 +300,24 @@ if (!Array.from) {
 ## 8. 如何获取精度更高的时间
 - 浏览器使用 performance.now() 可以获取到 performance.timing.navigationStart 到当前时间之间的微秒数
 - Node.js 使用 process.hrtime 返回一个数组，其中第一个元素的时间以秒为单位，第二个元素为剩余的纳秒
+
+## 9. null和undefined的区别
+- null表示一个无的对象，表示该处不应该有值，而undefined表示未定义。
+- 转换为数字时的结果不同。Number(null)为0， Number(undefined)为NaN.
+
+使用的场景上：
+null:
+- 作为函数的参数，表示该函数的参数不是对象。
+- 作为对象原型链的终点。
+
+undefined：
+- 变量被声明初始化后但未进行赋值时的值为undefined
+- 调用函数时，应该提供的参数并没有被赋值时，参数为undefined
+- 对象没有赋值属性， 该属性的值为undefined
+- 函数没有返回值时，默认返回undefined
+
+## 10. document、window、html、body的层级关系
+window > document > html > body
+- window是BOM的核心对象，它一方面用来获取或设置浏览器的属性和行为，另一方面作为全局对象提供方法。
+- document对象是一个和文档相关的对象，拥有一些操作文档内容的功能。但是地位没有window高。
+- html元素对象和document元素对象是属于html文档的dom对象。
