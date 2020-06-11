@@ -321,3 +321,16 @@ window > document > html > body
 - window是BOM的核心对象，它一方面用来获取或设置浏览器的属性和行为，另一方面作为全局对象提供方法。
 - document对象是一个和文档相关的对象，拥有一些操作文档内容的功能。但是地位没有window高。
 - html元素对象和document元素对象是属于html文档的dom对象。
+
+## 11. addEventListener函数的第三个参数
+第三个参数涉及到冒泡和捕获，true为捕获，false为冒泡。
+
+## 12. 所有的时间都有冒泡吗？
+并不是所有的事件都有冒泡的，例如
+- onblur
+- onfocus
+- onmouseenter
+- onmouseleave
+
+## 13. typeof 为什么对null错误显示
+这是JS的一个BUG，在JS最初的版本中使用的是32位系统，为了性能考虑使用低位存储变量的类型信息，000开头代表是对象然而null显示为全零，所以将他错误判断为object
