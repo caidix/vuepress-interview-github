@@ -183,9 +183,62 @@ CSSOM 树和 DOM 树构建完成后会开始生成 Render 树，这一步就是�
 
 ## 9. 跨域
 1. jsonp
+```javascript
+function sendJsonp(params) {
+  const {url, callback, timeout, data} = params;
+  let timer, str = '';
+  sendJsonp.id = sendJsonp.id || 1;
+  let id  = sendJsonp.id;
+  function cleanup() {
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+      window[name] = null;
+    }
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+  if (timeout) {
+    timer = setTimeout(()=> {
+      callback('超时');
+      cleanup();
+    },timeout);
+  }
+  let name = `cd_${id}`;
+  window[name] = res => {
+    if (window[name]){
+      cleanup();
+    }
+    callback('成功',res);
+  }
+  for(const key in data) {
+    const value = data[key]!==undefind? data[key]: '';
+    str+=`${key}=${encodeURIComponent(value)}&`;
+  }
+  url = url + '?' + str + `callback=${name}`;
+  const script = document.createElement('script');
+  script.type='text/javascript';
+  script.src = url;
+  document.head.appendChild(script);
+  // id自增
+  sendJsonp.id++;
+}
 
+sendJsonp({
+  url: 'http://abc.com/api/get',
+  data: {
+    name:'cd',
+    password: 'cd真TM帅'
+  },
+  callback: (err,data) => {
+    console.log('callback;', err, data)
+  },
+  timeout: 10000 // 单位是毫秒
+})
+```
 
 2. cors跨域资源共享（Cross-origin resource sharing）在发生跨域请求之前，发送了一个OPTIONS请求去询问服务器是否允许接下来的跨域请求
+如果是简单请求，则不会触发预检，直接发出正常请求。
 OPTIONS里有几个字段： 
 - Origin 发起请求原来的域
 - Access-Control-Request-Method: 将要发起跨域的请求方式

@@ -253,3 +253,9 @@ git reset --hard
 语法：git checkout -b <branch-name> <commit-id>
 命令：git checkout -b feature/delete HEAD@{2}
 命令执行完成后，分支恢复到 HEAD@{2} 的快照，即从 master 分支拉取 feature/delete 分支的内容，仍然缺少“新增xxx文件”的提交，直接将文件内容恢复到最新的提交内容，使用命令 git reset --hard HEAD@{1} 即可实现硬性覆盖本地工作区内容的目的。git reflog 命令获取到的内容为本地仓库所有发生过的变更，可谓恢复利器，既可向前追溯，亦可向后调整。
+
+## git对大小写不敏感，想修改文件的大小写并且与别的分支合并怎么办？
+- git config core.ignorecase false   关闭忽略大小写设置
+- git rm xxx   (删掉想更换大小写的文件，在这之前记得copy备份一个文件)
+- 修改备份文件名
+- git add commit push

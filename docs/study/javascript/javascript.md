@@ -356,3 +356,82 @@ window > document > html > body
 
 ## 13. typeof 为什么对null错误显示
 这是JS的一个BUG，在JS最初的版本中使用的是32位系统，为了性能考虑使用低位存储变量的类型信息，000开头代表是对象然而null显示为全零，所以将他错误判断为object
+
+## 14. class的原型
+类的所有方法都定义在类的prototype属性上面。
+```javascript
+class cat{
+  constructor(){}
+  a(){}
+  b(){}
+}
+
+等价于
+
+function cat(){}
+cat.prototype = {
+  constructor() {}
+  a(){}
+  b(){}
+}
+```
+当你使用class的时候，它会默认调用constructor这个函数，来接受一些参数，并构造出一个新的实例对象this，并将他返回。如果你的class没有定义constructor，也会隐式的生成一个constructor方法。
+
+```javascript
+class cat{
+  constructor(){
+    let moqiduo = true ; // 在constructor中let的变量 只存在于constructor这个构造函数中
+    this.name = 'cd';  //在constructor中this的属性和方法都会被定义到实例上
+  }
+  a(){} // class中定义一个方法。会被添加到原型对象prototype上。
+  b = 3;
+  c = function(){} // 用=来定义方法或属性，会被添加到实例上
+}
+
+let cc = new cat()
+console.log(cc) // cat {name:cd, b:3, c:f}
+```
+
+class的静态方法
+```javascript
+class Cat(){
+  static name = "这是cat类"
+}
+Cat.type = function(){ return '加菲' }
+
+```
+
+class与function又有一定的区别
+类不存在变量提升的机制，若是在类定义之前使用new xx()  就会报错，不能再类初始化之前使用。尽管类的本质也是一个函数。
+
+若在class中存在两个相同的属性或者方法会怎么样呢？
+```javascript
+class Cat{
+  constructor() {
+    this.name="cd"
+  }
+  name="sbdyf"
+  getName=function() {
+    console.log(this.name)
+  }
+}
+let i = new Cat()
+i.getName()
+//输出cd
+```
+可以看出constructor中定义的相同名称的属性和方法会覆盖在class里定义的
+
+### 总结
+- 当使用class时，会默认调用constructor函数来接受一些参数，并构造出一个新的实例对象（this）返回。
+- 类的本质也是一个函数。
+- 在constructor中定义的变量 只存在于constructor这个构造函数中。
+- 在constructor中this定义的属性和方法都会被定义到实例上。
+- 在class里使用 = 来定义的方法或属性都会被定义在实例上。
+- 在class中书写的方法会被定义到该类的原型对象prototype上。
+- 在class里使用static时可以定义静态方法、变量，是添加在类本身而不是实例对象。
+- class生成的实例对象，也会沿着原型链查找。
+
+## function的原型
+```
+function 
+```
