@@ -63,6 +63,157 @@ function Counter() {
     console.log('2', this.num, gap)
   }, 0);
 }
+// let j = [1, 2, 3, 4, 5, 3, 23, 1, 321, 312, 31, 1, 421, 3, 41, 323, 4, 31, 413, 13, 1321, 3, 2312, 12, 31, 313, 1312, 30]
 
-1, 996
-1, 1024
+// const chunk = function (arr, index) {
+//   let newArr = [];
+//   if (arr.length < index) return arr;
+//   for (let i = 0, j = -1; i < arr.length; i++) {
+//     if (i % index === 0) {
+//       newArr.push([]);
+//       j++;
+//     }
+//     newArr[parseInt(i / index)].push(arr[i])
+//   }
+//   return newArr;
+// }
+const chunk2 = (arr, index) => [...Array(Math.ceil(arr.length / index))].map((item, i) => arr.slice(i * index, (i + 1) * index))
+// console.log(chunk(j, 53))
+
+function resolvePromise(promise2, x, resolve, reject) {
+  // 循环引用报错
+  if (x === promise2) return reject(new TypeError('Chaining cycle detected for promise'));
+  // 防止多次调用
+  let called;
+  // x不为null且x是对象或者函数
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
+    try {
+      // 声明then = x 的then方法
+      let then = x.then;
+      // 如果then是一个函数，就默认为promise
+      if (typeof then === 'function') {
+        // 让then执行，第一个参数为this 后面是成功和失败的回调
+        then.call(x, y => {
+          if (called) return;
+          called = true;
+          resolvePromise(promise2, y, resolve, reject);
+        }, err => {
+          if (called) return;
+          called = true;
+          reject(err)
+        })
+      } else {
+        resolve(x);
+      }
+    } catch (error) {
+      if (called) return;
+      called = true;
+      reject(error);
+    }
+  } else {
+    resolve(x);
+  }
+}
+
+class Promise1 {
+  constructor(executor) {
+    this.state = 'pending';
+    this.value = undefined;
+    this.reason = undefined;
+    this.onResolvedCallbacks = [];
+    this.onRejectedCallbacks = [];
+    let resolve = (value) => {
+      if (this.state === 'pending') {
+        this.state = 'fulfilled';
+        this.value = value;
+        // 一旦resolve执行，调用成功数组的函数
+        this.onResolvedCallbacks.forEach(fn => fn());
+      }
+    }
+    let reject = (reason) => {
+      if (this.state === 'pending') {
+        this.state = 'rejected';
+        this.reason = reason;
+        // 一旦reject执行，调用失败的函数
+        this.onRejectedCallbacks.forEach(fn => fn());
+      }
+    }
+    try {
+      executor(resolve, reject);
+    } catch (error) {
+      reject(error);
+    }
+  }
+  then(onFulfilled, onRejected) {
+    onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+    onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
+    const promise2 = new Promise1((resolve, reject) => {
+      if (this.state === 'fulfilled') {
+        setTimeout(() => {
+          try {
+            let x = onFulfilled(this.value);
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        }, 0)
+      }
+      if (this.state === 'rejected') {
+        setTimeout(() => {
+          try {
+            let x = onRejected(this.reason);
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        }, 0)
+      }
+      if (this.state === 'pending') {
+        this.onResolvedCallbacks.push(() => {
+          setTimeout(() => {
+            try {
+              let x = onFulfilled(this.value);
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
+          }, 0)
+        })
+        this.onRejectedCallbacks.push(() => {
+          setTimeout(() => {
+            try {
+              let x = onRejected(this.reason);
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
+          }, 0)
+        })
+      }
+    })
+    return promise2;
+  }
+  catch(fn) {
+    return this.then(null, fn);
+  }
+}
+
+Promise1.resolve = function (val) {
+  return new Promise1((resolve, reject) => {
+    resolve(val)
+  })
+}
+
+Promise1.reject = function (val) {
+  return new Promise1((resolve, reject) => {
+    reject(val)
+  })
+}
+
+Promise1.race = function (promises) {
+  return new Promise1((resolve, reject) => {
+    for (let i = 0; i < promises.length; i++) {
+      promises[i].then(resolve, reject);
+    }
+  })
+}

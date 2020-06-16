@@ -431,7 +431,80 @@ i.getName()
 - 在class里使用static时可以定义静态方法、变量，是添加在类本身而不是实例对象。
 - class生成的实例对象，也会沿着原型链查找。
 
-## function的原型
+## 15. function的原型
+```javascript 
+function A() {
+  let i = 0; // 在函数内用var定义的就是私有的
+  this.j = 1; // 在函数内用this承接的就是公有
+}
+A.prototype.prototypeProp = '我是构造函数原型对象上的属性'
+A.hello = 'cd'; //静态属性
+A.callme = function() { console.log('father') }; // 静态方法，位于构造函数上，并不能在实例中打印出
+
+let w = new A();
+console.log( w.i, w.j ) // undefind 1
+console.log( w.hello,A.hello) // undefind cd
+console.log( w.prototypeProp) // 定义在构造函数原型对象上的属性和方法虽然不能直接表现在实例对象上，但是实例对象却可以访问或者调用它们
 ```
-function 
+
+### 遍历实例对象属性的三种方法:
+- 使用for...in...能获取到实例对象自身的属性和原型链上的属性
+- 使用Object.keys()和Object.getOwnPropertyNames()只能获取实例对象自身的属性
+- 可以通过.hasOwnProperty()方法传入属性名来判断一个属性是不是实例自身的属性
+
+
+## 16. Promise规范浅忆
+### 状态
+promise有三个状态：分别是
+- pending:可以切换到fulfilled或rejected
+- fulfilled：不可迁移状态，必须有个不可变的value
+- rejected：不可迁移状态，必须有个不可变的reason
+
+### 实现一个promise
+
+
+## 17. 深浅拷贝
+### 浅拷贝
+1. 简单的复制引用
+```javascript
+function shallowClone(copyObj) {
+  var obj = {};
+  for(let i in copyObj) {
+    obj[i] = copyObj[i];
+  }
+  return obj;
+}
+```
+2. Array.prototype.concat()
+```javascript
+const arr = [1,2,3,4,[5,6]];
+const copy = arr.concat(); // 利用concat()创建arr的副本
+```
+3. Array.prototype.slice()
+slice和concat方法不修改原数组，只会返回一个潜复制了数组元素中的元素的新数组。
+```javascript
+const arr = [1,2,3,4,[5,6]];
+const copy = arr.concat(); // 利用slice()创建arr的副本
+```
+4. Object.assign()
+把任意多个的源对象自身的可枚举属性拷贝给目标对象，然后返回目标对象。它是对单层的深拷贝，对于对象内的对象是浅拷贝。
+```javascript
+i = Object.assign({}, j);
+```
+
+### 深拷贝
+1. JSON.stringify/parse方法
+JSON.stringify是将一个js值转成一个JSON字符串。
+JSON.parse是将一个JSON字符串专场一个js值或对象。
+使用该方法，若对象中存在undefined、function、symbol会在转换过程中被忽略。
+```javascript
+const cloneObj = JSON.parse(JSON.stringify({haha:'xixi'}));
+```
+
+2. 递归的方法
+```javascript
+function deepclone(source) {
+  const type = (target) => Object.prototype.toString.call(target).slice(8, -1);
+
+}
 ```
