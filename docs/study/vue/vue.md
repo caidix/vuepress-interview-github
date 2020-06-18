@@ -61,3 +61,35 @@ vue采用数据劫持结合发布订阅者模式 通过object. defineProperty()�
   height:20px;
 }
 </style>
+```
+
+## 4. 请详细说下你对vue生命周期的理解？
+总共分为8个阶段创建前/后，载入前/后，更新前/后，销毁前/后
+
+- beforeCreate 创建前执行（vue实例的挂载元素$el和数据对象data都为undefined，还未初始化）
+
+- created 完成创建 （完成了data数据初始化，el还未初始化）
+
+- beforeMount 载入前（vue实例的$el和data都初始化了，但还是挂载之前为虚拟的dom节点，data.message还未替换。）
+
+- mounted 载入后html已经渲染(vue实例挂载完成，data.message成功渲染。)
+
+- beforeUpdate 更新前状态（view层的数据变化前，不是data中的数据改变前）
+
+- updated 更新状态后
+
+- beforeDestroy 销毁前
+
+- destroyed 销毁后 （在执行destroy方法后，对data的改变不会再触发周期函数，说明此时vue实例已经解除了事件监听以及和dom的绑定，但是dom结构依然存在）
+
+说一下每一个阶段可以做的事情
+
+- beforeCreate:可以在这里加一个loading事件，在加载实例时触发。
+
+- created:初始化完成时的事件写这里，如果这里结束了loading事件，异步请求也在这里调用。
+
+- mounted:挂在元素，获取到DOM节点
+
+- updated:对数据进行处理的函数写这里。
+
+- beforeDestroy:可以写一个确认停止事件的确认框。

@@ -503,8 +503,132 @@ const cloneObj = JSON.parse(JSON.stringify({haha:'xixi'}));
 
 2. 递归的方法
 ```javascript
-function deepclone(source) {
-  const type = (target) => Object.prototype.toString.call(target).slice(8, -1);
+function deepClone(obj) {
+    if(!obj || typeof obj !== 'object')return obj;
+    let objClone = obj Array.isArray(obj) ? [] : {};
+    // for...in 会把继承的属性一起遍历
+    for (let key in obj) {
+        // 判断是不是自有属性，而不是继承属性
+        if (obj.hasOwnProperty(key)) {
+            //判断ojb子元素是否为对象或数组，如果是，递归复制
+            if (obj[key] && typeof obj[key] === "object") {
+                objClone[key] = this.deepClone(obj[key]);
+            } else {
+                //如果不是，简单复制
+                objClone[key] = obj[key];
+            }
+        } 
+    }
+    return objClone;
+}
+```
 
+## 18. 防抖and节流
+### 防抖
+```javascript
+/**
+ * @desc 函数防抖
+ * @param func 函数
+ * @param wait 延迟执行毫秒数
+ * @param immediate true 表立即执行，false 表非立即执行
+ */
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    let context = this;
+    let args = arguments;
+    if (timeout) clearTimeout(timeout);
+    if (immediate) {
+      if (!timeout) {
+        func.apply(context,args);
+      }
+      timeout = setTimeout(() => {
+        timeout = null;
+      }, wait);
+    } else {
+      timeout = setTimeout(() => {
+        func.apply(context, args);
+      }, wait);
+    }
+  }
+}
+```
+
+### 节流
+对于节流，一般有两种方式可以实现，分别是时间戳版和定时器版。
+- 时间戳版的函数触发是在时间段内开始的时候。
+- 定时器版的函数触发是在时间段内结束的时候。
+```javascript
+/**
+ * @desc 函数节流
+ * @param func 函数
+ * @param wait 延迟执行毫秒数
+ * @param type 1 表时间戳版，2 表定时器版
+ */
+ function throttle(func, wait ,type) {
+   if (type === 1) {
+     let date = 0;
+   }
+   if (type === 2) {
+     let timer = null;
+   }
+   return function() {
+     let context = this;
+     let args = arguments;
+     if (type === 1) {
+      let newDate = new Date();
+      if (newDate - date > wait) {
+        func.apply(context, args);
+        date = newDate;
+      }
+     }
+     if (type === 2) {
+       if (!timeout) {
+        timeout = setTimeout(() => {
+          func.apply(context, args);
+          timeout = null;
+        }, wait)
+       }
+     }
+   }
+ }
+```
+
+## 19. 如何阻止冒泡
+```javascript
+function stopBubble(e) {
+  if(e && e.stopPropagation) {
+    e.stopPropagation();
+  } else {
+    // IE取消的方式
+    window.event.cancelBubble = true;
+  }
+}
+```
+
+## 20. 如何阻止默认时间
+```javascript
+function stopDefault(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  else window.event.returnValue = false;
+  return false;
+}
+```
+
+## 手写bind
+```javascript
+Function.prototype.bind2 = function (context) {
+    if (typeof this !== "function") {
+      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+    var self = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+    var fNOP = function () {};
+    var fbound = function () {
+        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
+    }
+    fNOP.prototype = this.prototype;
+    fbound.prototype = new fNOP();
+    return fbound;
 }
 ```
