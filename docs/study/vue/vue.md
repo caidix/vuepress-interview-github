@@ -93,3 +93,52 @@ vue采用数据劫持结合发布订阅者模式 通过object. defineProperty()�
 - updated:对数据进行处理的函数写这里。
 
 - beforeDestroy:可以写一个确认停止事件的确认框。
+
+## 5. data是如何被访问的
+vue在执行过程中，会将data和prop都挂载在vm实例上，这个时候源码做了一个判断，如果是相同的命名则会报错。在源码中，其对data中的元素进行了proxy代理：
+```javascript
+const sharedPropertyDefinition = {
+  enumerable:true,
+  configurable: true,
+  get: noop,
+  set: noop
+}
+function proxy (target: Object, sourceKey: string, key: string) {
+  sharedPropertyDefinition.get = function proxyGetter() {
+    return this[sourceKey][key]
+  }
+  sharedPropertyDefinition.set = function proxySetter(val) {
+    this[sourceKey][key] = val
+  }
+  Object.defineProperty(target, key, sharedPropertyDefinition)
+}
+
+// proxy(_vm, _data, key) 所以我们在vm._data中也可以访问到data中的对象
+```
+
+render：
+在vue中可以写template和render函数，最终都会被vue编译成render function的形式，render()函数里有一个createElement方法，我们可以调用这个方法传入我们所
+需要渲染的dom元素，createElement方法其实是对_createElement函数的封装，他通过用户传入更多的参数，在处理完传入的参数后，调用真正创建Vnode的函数_createElement
+
+```javascript
+export function createElement (
+  context: Component,
+  tag: any,
+  data: any,
+  children: any,
+  normalizationType: any,
+  alwaysNormalize: boolean
+)
+```
+_createElement 方法有 5 个参数，context 表示 VNode 的上下文环境，它是 Component 类型；tag 表示标签，它可以是一个字符串，也可以是一个 Component；data 表示 VNode 的数据，它是一个 VNodeData 类型，可以在 flow/vnode.js 中找到它的定义；children 表示当前 VNode 的子节点，它是任意类型的，它接下来需要被规范为标准的 VNode 数组；normalizationType 表示子节点规范的类型，类型不同规范的方法也就不一样，它主要是参考 render 函数是编译生成的还是用户手写的。
+由于 Virtual DOM 实际上是一个树状结构，每一个 VNode 可能会有若干个子节点，这些子节点应该也是 VNode 的类型。_createElement 接收的第 4 个参数 children 是任意类型的，因此我们需要把它们规范成 VNode 类型。 
+其实源码是很复杂繁琐的，我们要从源码中学习到  函数式的写法，柯里化的运用
+
+## virtual dom的优势在哪里
+Dom引擎、js引擎相互独立，但又工作在同一线程，js代码调用dom api必须挂起js引擎，转换传入参数数据、激活dom引擎，dom重绘后再转换可能有的返回值，最后激活js引擎并继续执行若有频繁的dom api调用，且浏览器厂商不做“批量处理”优化。
+引擎间切换的单位代价将迅速积累若其中有强制重绘的dom api调用，重新计算布局、重新绘制图像会引起更大的性能消耗。
+
+优势：
+1. 虚拟dom不会立马进行排版和重绘操作。
+2. 虚拟dom会在进行频繁修改过后一次性修改真实的dom，减少操作真实dom频繁触发排版和重绘。
+3. 虚拟dom有效降低大面积真实dom的重绘和排版，因为最终与真实dom比较差异，可以只渲染局部。

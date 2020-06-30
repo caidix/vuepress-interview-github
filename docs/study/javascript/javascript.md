@@ -615,7 +615,26 @@ function stopDefault(e) {
 }
 ```
 
-## 手写bind
+## 21. common.js和es6中模块引入的区别
+
+## 22. 0.1 + 0.2 是否等于 0.3
+ECMAScript 中的 Number 类型使用 IEEE754 标准来表示整数和浮点数值。所谓 IEEE754 标准，全称 IEEE 二进制浮点数算术标准，这个标准定义了表示浮点数的格式等内容。
+
+在 IEEE754 中，规定了四种表示浮点数值的方式：单精确度（32位）、双精确度（64位）、延伸单精确度、与延伸双精确度。像 ECMAScript 采用的就是双精确度，也就是说，会用 64 位字节来储存一个浮点数。
+```javascript
+function add(){
+    const args = [...argument];
+    let maxLen = Math.max.apply(null, args.map(item => {
+        const str = item.split('.')[1];
+        return str? str.length : 0;
+    } ))
+    return (
+        args.reduce((sum, cur) => sum + cur * 10 ** maxLen, 0) / 10 ** maxLen
+        )
+}
+```
+
+## 23. 手写bind
 ```javascript
 Function.prototype.bind2 = function (context) {
     if (typeof this !== "function") {
@@ -632,3 +651,89 @@ Function.prototype.bind2 = function (context) {
     return fbound;
 }
 ```
+
+## 24. DOM操作-添加删除移动复制创建查找结点
+- 创建新节点
+```js
+createDocumentFragment();
+createElement();
+createTextNode();
+```
+
+- 添加、移除、替换、插入
+```js
+appendChild(node)  // 注意 如果是已有的dom元素 会把之前的dom元素删除
+removeChild(node)
+replaceChild(new, old)
+insertBefore(new, old)
+```
+
+- 查找
+```js
+getElementById();
+getElementByName()
+getElementByTagName()
+getElementByClassName()
+querySelector()
+querySelectorAll()
+```
+
+- 属性操作
+```js
+getAttribute(key)
+setAttribute(key, value)
+hasAttribute(key)
+removeAttribute(key)
+```
+
+## 25. js延迟加载的方式有哪些？
+js的加载、解析和执行会阻塞页面的渲染过程，因此希望js脚本尽可能的延迟加载，提高页面渲染速度。
+1. 将js脚本放在文档的底部，来使js脚本尽可能的在最后加载执行。
+2. 给js脚本增加defer属性，这个属性会让脚本的加载与文档的解析同步解析，然后再文档解析完成后再执行这个脚本文件，这样的话就能使页面渲染不被阻塞，多个设置了defer属性的脚本按照规范来说应该是最后按顺序执行的，但是在一些浏览器中可能不是这样。
+3. 给js脚本增加async属性，使脚本异步加载，不会阻塞页面的解析过程，但当脚本解析完成就会进行js脚本执行，如果这个时候文档没有解析完成，还是会造成阻塞。其执行顺序是不可预测的。
+4. 动态创建DOM标签的方式，可以对文档的加载事件进行监听，当文档加载完成后再动态的创建script标签来引入js脚本。
+
+## 26. js的几种模块规范？
+js中现在比较成熟的有四种模块加载方案
+- 第一种是CommonJS方案，它通过require来引入模块，通过module.exports来定义模块的输出接口。这种模块加载方案是服务器端的解决方案，它是以同步的形式来引入模块的，认为模块就是对象，因为服务器端的文件都在本地磁盘，所以读取非常迅速，所以采用同步的方式进行加载是没有问题的。commonjs的这种加载称为“运行时加载”，因为只有运行时才能得到这个对象，导致完全没办法在编译时做“静态优化”，比如语法分析和类型检验，这是CommonJS的一大不足，只有等到该模块加载完成之后，后面的代码才有机会执行，哪怕后面并没有用到这个模块。如果是浏览器端，需要通过网络，如果网络出现异常，模块加载卡住，后面的代码就得不到运行，浏览器也会陷入假死状态，这种需要网络请求的情况，使用异步加载的方式更加合适。
+- 第二种是AMD方案，采用异步的形式加载模块，模块的记载不影响后面的语句的执行，所有依赖这个模块的语句都定义在一个回调函数里，等到加载完成后再执行回调函数。require.js实现了AMD规范。
+```js
+require([module], callback);
+第一个参数[module]，是一个数组，里面的成员就是要加载的模块；第二个参数callback，则是加载成功之后的回调函数。
+require(['fs'], function(fs) {
+  // to do something
+})
+```
+但是AMD有一个缺陷，在程序正真执行的过程中，有些模块的加载其实是没有必要的，即使加载了，在之后的回调中也没有被用到，这样在一定程度上造成了浪费。就有了CMD规范
+- 第三种CMD方案。解决了AMD异步方案带来的问题(sea.js)。它的主要特点是允许你在使用模块的时候再去加载模块。
+- 第四种是Es6的方案，使用import 、 export、 export default 的形式来导入导出模块。
+
+### AMD和CMD的区别
+第一点AMD推崇依赖前置，在定义模块的时候就要声明其依赖的模块。而CMD推崇就近依赖，只有在用到某个模块的时候再去require
+第二点对依赖模块的执行时机处理不同。AMD在依赖模块加载完成后就直接执行依赖模块，依赖模块的执行顺序和我们书写的顺序不一定一致。而CMD在依赖模块加载完成后并不执行，只是下载而已，等到所有的依赖都加载好后，进入回调逻辑，遇到require语句时在执行对应的模块，与书写顺序保持一致。
+```js
+//amd
+define(['./a', './b'], (a,b) => {
+  a.xxx()
+  b.xxx()
+})
+
+// cmd
+define((require, exports, module) => {
+  let a = require('./a')
+  a.xxx()
+  let b = require('./b')
+  b.xxx()
+})
+```
+
+### es6方案和commonjs的差别
+commonjs输出的是值的拷贝，es6是值的引用，当需要时才回去被加载的模块里取值。
+commonjs模块是运行时加载，es6模块是编译时输出接口。commonjs模块就是对象，即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上面读取方法，这种加载成为运行时加载，而es6模块不是对象，他的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+
+## 27. 如何回答js事件循环
+1. 首先js是单线程运行的，代码在运行时，会将不同函数的执行上下文按顺序加入栈中保证代码的有序执行。
+2. 在执行同步代码的过程中，如果函数内有定义异步的事件，不会阻塞代码的执行，而是将异步的事件挂起，继续执行执行栈的其他任务。
+3. 当同步时间执行完后，再将异步事件对应的回调加入到与当前执行栈不同的另一个任务队列中等待执行。
+4. 任务队列里又分为宏任务和微任务，它们的执行阶段也不同，当同步任务完成后，js引擎会判断微任务队列中是否有任务可以执行，有的话就压入栈中执行，执行完后再去执行宏任务。
+
