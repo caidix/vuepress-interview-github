@@ -615,7 +615,84 @@ function stopDefault(e) {
 }
 ```
 
-## 21. common.js和es6中模块引入的区别
+## 21. js的设计模式
+### 1. 单例模式
+概念：一个类只产生一个唯一的实例。因为在许多时候整个系统只需要拥有一个全局对象，这样有利于我们协调系统整体的行为。
+应用场景：如商城系统中购车对象是单例的。
+```js
+function Person() {
+  if(!Person.instance) {
+    Person.instance = {}
+  }
+  return Person.instance
+}
+p1=Person()
+p2=Person()
+p1===p2
+```
+
+### 2. 工厂模式（构造函数模式）
+概念：由一个方法来决定到底要创建哪个类的实例
+```js
+const factory = {
+  createProductA() {
+    console.log('A')
+  },
+  createProductB() {
+    console.log('B')
+  },
+  createProductC() {
+    console.log('C')
+  },
+  create(type) {
+    return new factory[type]
+  }
+}
+```
+
+### 3. 策略模式
+概念：每个问题都提前想好对应的解决方案（一种映射关系）
+```js
+// 封装的策略算法 
+const money = {
+  'S':(salary) => {
+    return salary * 4;
+  },
+  'A':(salary) => {
+    return salary * 3;
+  },
+  'B':(salary) => {
+    return salary * 2;
+  }
+}
+
+// 具体的计算方法
+const calculateBonus = function(level, salary) {
+  return money[level](salary)
+}
+```
+
+### 4. 适配器方法
+概念：比如后台传给我们一个对象格式，我们要的是数组，就走这个适配器做一个转换。
+
+### 5. 观察者模式 - 发布订阅模式
+概念：定义了一种一对多的关系，让多个观察者对象同时监听某一个发布者对象，这个发布者对象的状态发生改变时就会通知所有的观察者对象。
+```
+function Observer() {
+  this.subs = [];
+}
+Observer.prototype.subscribe = (fn) => {
+  this.subs.push(fn)
+}
+Observer.prototype.unsubscribe = (fn) => {
+  this.subs = this.subs.filter(observer => observer !== fn)
+}
+Observer.prototype.notify = (msg) => {
+  this.subs.forEach(fn => fn(msg))
+}
+```
+
+
 
 ## 22. 0.1 + 0.2 是否等于 0.3
 ECMAScript 中的 Number 类型使用 IEEE754 标准来表示整数和浮点数值。所谓 IEEE754 标准，全称 IEEE 二进制浮点数算术标准，这个标准定义了表示浮点数的格式等内容。
