@@ -142,3 +142,219 @@ Dom引擎、js引擎相互独立，但又工作在同一线程，js代码调用d
 1. 虚拟dom不会立马进行排版和重绘操作。
 2. 虚拟dom会在进行频繁修改过后一次性修改真实的dom，减少操作真实dom频繁触发排版和重绘。
 3. 虚拟dom有效降低大面积真实dom的重绘和排版，因为最终与真实dom比较差异，可以只渲染局部。
+
+
+## vue核心源码简写
+1.x版本
+```js
+utils = {
+  getValue(expr, vm) {
+    return vm.$data[expr.trim()]
+  },
+  setValue(expr, vm, newValue) {
+    vm.$data[expr.trim()] = newValue;
+  },
+  modelUpdater(node, value) {
+    node.value = value;
+  },
+  textUpdater(node, value) {
+    node.textContent = value
+  },
+  model(node, value, vm) {
+    const initValue = this.getValue(value, vm)
+    new Wacher(value, vm, (newVal) => {
+      this.modelUpdater(node, newVal)
+    })
+    node.addEventListener('input', (e) => {
+      const newValue = e.target.value;
+      this.setValue(value, vm, newValue)
+    })
+    this.modelUpdater(node, initValue)
+  },
+  text(node, value, vm) {
+    let result;
+    if (value.includes('{{')) {
+      result = value.replace(/\{\{(.+?)\}\}/g, (...args) => {
+        const expr = args[1];
+        new Wacher(expr, vm, (newVal) => {
+          this.textUpdater(node, newVal)
+        })
+        return this.getValue(expr, vm)
+      })
+    } else {
+      result = this.getValue(value, vm)
+    }
+    this.textUpdater(node, result)
+  },
+  on(node, value, vm, eventName) {
+    console.log(node, value, vm, eventName)
+    const eventMethod = vm.$options.methods ? vm.$options.methods[value] : null
+    eventMethod && node.addEventListener(eventName, eventMethod.bind(vm), false)
+  }
+}
+
+class Dep {
+  constructor() {
+    this.subs = []
+  }
+  addSubs(sub) {
+    this.subs.push(sub)
+  }
+  notify() {
+    this.subs.forEach(w => w.updated())
+  }
+}
+class Wacher {
+  constructor(expr, vm, cb) {
+    this.expr = expr;
+    this.vm = vm;
+    this.cb = cb;
+    // 为了能够触发一次defineProperty,将相同变量的事件挂载在同一个对象上
+    this.oldValue = this.getOldValue();
+  }
+  getOldValue() {
+    // 这里的Dep也可以换成任意一个全局变量 做定义
+    Dep.target = this;
+    // 调用了getValue方法从而调用了$data.get() 做事件劫持
+    const oldValue = utils.getValue(this.expr, this.vm);
+    Dep.target = null;
+    return oldValue;
+  }
+  updated() {
+    const newValue = utils.getValue(this.expr, this.vm);
+    if (newValue !== this.oldValue) {
+      this.cb(newValue)
+    }
+  }
+}
+
+class Compiler {
+  constructor(el, vm) {
+    this.el = this.isElementNode(el) ? el : document.querySelector(el)
+    this.vm = vm;
+    /**
+     * 1. 创建碎片元素
+     */
+    const fragment = this.compileFragment(this.el);
+    this.compile(fragment)
+    this.el.appendChild(fragment)
+  }
+  isElementNode(el) {
+    return el.nodeType && el.nodeType === 1;
+  }
+  isTextNode(el) {
+    return el.nodeType && el.nodeType === 3;
+  }
+  isDirector(name) {
+    return name.startsWith('v-')
+  }
+  isEventName(name) {
+    return name.startsWith('@')
+  }
+  compileElement(node) {
+    // v-
+    const attributes = Array.from(node.attributes)
+    attributes.forEach(attr => {
+      const { name, value } = attr;
+      if (this.isDirector(name)) {
+        const [, directive] = name.split('-')
+        const [compileKey, eventName] = directive.split(':');
+        console.log(compileKey, eventName, name)
+        utils[compileKey](node, value, this.vm, eventName)
+      }
+      else if (this.isEventName(name)) {
+        const [, eventName] = name.split('@');
+        utils['on'](node, value, this.vm, eventName)
+      }
+    })
+  }
+  compileText(node) {
+    const content = node.textContent;
+    if (/\{\{(.+?)\}\}/.test(content)) {
+      console.log('content:', content)
+      utils['text'](node, content, this.vm)
+    }
+  }
+  compile(node) {
+    const childNodes = Array.from(node.childNodes)
+    childNodes.forEach(childNode => {
+      if (this.isElementNode(childNode)) {
+        this.compileElement(childNode)
+      }
+      else if (this.isTextNode(childNode)) {
+        this.compileText(childNode)
+      }
+      if (childNode.childNodes && childNode.childNodes.length) {
+        this.compile(childNode)
+      }
+    })
+  }
+  compileFragment(el) {
+    const f = document.createDocumentFragment();
+    let firstChild;
+    while (firstChild = el.firstChild) {
+      f.appendChild(firstChild)
+    }
+    return f;
+  }
+}
+class Observer {
+  constructor(data) {
+    this.observe(data)
+  }
+  observe(data) {
+    if (data && typeof data === 'object') {
+      Object.keys(data).forEach(key => {
+        this.defineReactive(data, key, data[key])
+      })
+    }
+  }
+  defineReactive(data, key, value) {
+    this.observe(value);
+    const dep = new Dep()
+    Object.defineProperty(data, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        const target = Dep.target;
+        target && dep.addSubs(target)
+        return value;
+      },
+      set: (newValue) => {
+        if (value === newValue) return;
+        this.observe(newValue)
+        value = newValue;
+        dep.notify();
+      }
+    })
+  }
+}
+class Vue {
+  constructor(options) {
+    this.$options = options;
+    this.$data = options.data;
+    this.$el = options.el;
+
+    new Observer(this.$data);
+    new Compiler(this.$el, this);
+
+    this.proxyData(this.$data);
+  }
+
+  proxyData(data) {
+    Object.keys(data).forEach(key => {
+      Object.defineProperty(this, key, {
+        enumerable: true,
+        configurable: true,
+        get: () => {
+          return data[key];
+        },
+        set: (newValue) => {
+          data[key] = newValue;
+        }
+      })
+    })
+  }
+}
+
+```
