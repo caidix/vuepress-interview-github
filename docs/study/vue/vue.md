@@ -143,6 +143,131 @@ Dom引擎、js引擎相互独立，但又工作在同一线程，js代码调用d
 2. 虚拟dom会在进行频繁修改过后一次性修改真实的dom，减少操作真实dom频繁触发排版和重绘。
 3. 虚拟dom有效降低大面积真实dom的重绘和排版，因为最终与真实dom比较差异，可以只渲染局部。
 
+## vue的优点
+1. 虚拟DOM，如上
+2. MVVM思想实现数据的双向绑定，让开发者不再操作DOM对象，有更多的时间去思考业务逻辑。
+
+## 为什么vue中不推荐用index作为key？
+> 这里要看diff算法它做了什么。
+- 首先，它会将代码编译成vNode:
+```js
+{
+  tag: 'ul',
+  children: [
+    { tag: 'li' , children: [{ vnode: { text: '嘻嘻' } }]},
+    { tag: 'li' , children: [{ vnode: { text: '哈哈' } }]},
+    { tag: 'li' ,key: 1, children: [{ vnode: { text: '丽丽' } }]}
+  ]
+}
+```
+数据变更，触发dep.notify forEach Watcher.update() 带着新的vnode走触发__patch__的过程。看代码：
+```js
+function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
+  //这里是拿到新旧首节点及下标
+    let oldStartIdx = 0  
+    let newStartIdx = 0
+    let oldEndIdx = oldCh.length - 1
+    let oldStartVnode = oldCh[0]
+    let oldEndVnode = oldCh[oldEndIdx]
+    let newEndIdx = newCh.length - 1
+    let newStartVnode = newCh[0]
+    let newEndVnode = newCh[newEndIdx]
+    let oldKeyToIdx, idxInOld, vnodeToMove, refElm
+
+    // removeOnly is a special flag used only by <transition-group>
+    // to ensure removed elements stay in correct relative positions
+    // during leaving transitions
+    const canMove = !removeOnly
+
+    if (process.env.NODE_ENV !== 'production') {
+      checkDuplicateKeys(newCh)
+    }
+
+    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+      if (isUndef(oldStartVnode)) {
+        oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
+      } else if (isUndef(oldEndVnode)) {
+        oldEndVnode = oldCh[--oldEndIdx]
+      } else if (sameVnode(oldStartVnode, newStartVnode)) {
+        patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        oldStartVnode = oldCh[++oldStartIdx]
+        newStartVnode = newCh[++newStartIdx]
+      } else if (sameVnode(oldEndVnode, newEndVnode)) {
+        patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        oldEndVnode = oldCh[--oldEndIdx]
+        newEndVnode = newCh[--newEndIdx]
+      } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
+        patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
+        oldStartVnode = oldCh[++oldStartIdx]
+        newEndVnode = newCh[--newEndIdx]
+      } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+        patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
+        oldEndVnode = oldCh[--oldEndIdx]
+        newStartVnode = newCh[++newStartIdx]
+      } else {
+        if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
+        idxInOld = isDef(newStartVnode.key)
+          ? oldKeyToIdx[newStartVnode.key]
+          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
+        if (isUndef(idxInOld)) { // New element
+          createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
+        } else {
+          vnodeToMove = oldCh[idxInOld]
+          if (sameVnode(vnodeToMove, newStartVnode)) {
+            patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+            oldCh[idxInOld] = undefined
+            canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
+          } else {
+            // same key but different element. treat as new element
+            createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
+          }
+        }
+        newStartVnode = newCh[++newStartIdx]
+      }
+    }
+    if (oldStartIdx > oldEndIdx) {
+      refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
+      addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
+    } else if (newStartIdx > newEndIdx) {
+      removeVnodes(oldCh, oldStartIdx, oldEndIdx)
+    }
+  }
+```
+再来看sameNode
+```js
+function sameVnode (a, b) {
+  return (
+    a.key === b.key && (
+      (
+        a.tag === b.tag &&
+        a.isComment === b.isComment &&
+        isDef(a.data) === isDef(b.data) &&
+        sameInputType(a, b)
+      ) || (
+        isTrue(a.isAsyncPlaceholder) &&
+        a.asyncFactory === b.asyncFactory &&
+        isUndef(b.asyncFactory.error)
+      )
+    )
+  )
+}
+```
+
+
+## 组件中的data为什么是函数
+如果组件直接写了一个对象的话，那么如果你在模板中多次声明这个组件，会导致组件中的data指向同一个引用。此时如果对某个组件中对该data进行修改，会导致其他组件里的data也被污染。而如果使用函数的话，每个组件里的data会有单独的引用，这个问题就可以避免了。
+简单来说,这个data就是个对象，比如一个Button组件，存放了Button.data对象，他只是拿到了值的引用，其值存放在了堆中。Button.data对象在当前的运行环境下是全局唯一的。
+在源码过程中，所有的Button组件都会被createElement函数所调用，它会直接拿着button组件的data这个引用去创建一个组件，所以导致其指向都是一样的。而使用函数的话会执行函数，就是新的data了。
+
+## computed和watch有什么区别
+1. 我首先从作用上来说，vue定义computed为计算属性，用来通过某些data内的变量进行一定的逻辑计算后返回最终的值，适合做多个变量决定一个变量值的事情。watch为监听属性，可以用于监听某个变量（包括对象和对象内的属性）的变化，一旦变化时就可以获取旧值和新值，做一些你想做的事情，适合做一个影响到其他格局的事。
+2. computed计算属性其实也是透过Dep和Watcher（2.x版本）进行了依赖的收集监听的，所以它不能与data内的变量相同命名，源码内有做判断。并且有缓存值dirty，在获取computed值时，会去判断是否需要重新计算还是使用之前的值。其在进行依赖收集的时候。computed在被收集的时候传出了一个修改其dirty变量的方法。若其内的被收集依赖了的变量发生改变，它们的依赖sub数组内就会执行修改dirty的方法。
+
+## watch的deep：true是如何实现的
+vue对data的监听使用的是Object.defineProperty,是对data里的属性进行监听，而deep可以对该属性进行深层循环遍历数组、对象，走Observer进行依赖收集到Watcher。但是如果data对象的量很大的话会对性能上造成一定的损耗，在特别大的项目里有可能还会造成堆的溢出。
+
 
 ## vue核心源码简写
 1.x版本

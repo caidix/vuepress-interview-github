@@ -51,3 +51,55 @@ stream.on('end', function (chunk) {
 - process.chdir()更改工作目录
 - process.env变量访问shell环境下的变量
 - process.exit推出
+
+
+### Koa与Express的比较
+1. 发送
+> 信息传递上express函数里传递了对应的请求对象和响应对象，而koa使用content上下文，并对其写入相应的属性。比如查看ctx.query\ctx.params。
+Koa 实际上对标的是 Connect[10]（Express 底层的中间件层），而不包含 Express 所拥有的其他功能，例如路由、模板引擎、发送文件等。
+express
+```js
+(req, res) => {
+  res.send('Hello Express');
+}
+```
+koa
+```js
+app.use((ctx) => {
+  ctx.body = 'Hello Koa';
+});
+```
+
+2. 模型角度
+> express 的执行方式是将请求依次通过中间件进行处理，最后走到处理响应的函数返回处理的结果。
+
+express
+```js
+// 分类路由
+  router.post('/article/add', adminArticle.add);
+  router.post('/article/edit', adminArticle.editArticle);
+
+// 执行
+(req, res, next) => {
+  ...
+  next(xxx) // （携带参数）前往下一个执行地点
+}
+
+/**
+ * 响应
+ * @param {响应方法} res 
+ * @param {http返回响应值} httpCode 
+ * @param {返回是否是成功的值：0为成功} code 
+ * @param {返回的提示信息} message 
+ * @param {返回的字段内容} data 
+ */
+function returnClient(res, httpCode = 500, code = 200, message = '服务器异常', data = {}) {
+  res.status(httpCode).json({
+    code,
+    message,
+    data
+  })
+}
+// 简单形式
+res.send();
+```

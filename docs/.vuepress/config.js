@@ -53,7 +53,7 @@ module.exports = {
         },
         {
           title: "Nodejs",
-          children: ["/study/node.md"],
+          children: ["/study/node/node.md"],
         },
         {
           title: "Git",
