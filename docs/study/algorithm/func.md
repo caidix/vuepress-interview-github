@@ -16,3 +16,5 @@ let i = curry(add);
 
 console.log(i(1, 2, 3)(4));
 ```
+
+

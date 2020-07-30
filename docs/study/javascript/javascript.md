@@ -107,17 +107,18 @@ arr.length = 0; // 可以直接让数字清空，而且数组类型不变。
       t = null;
       ```
 
-
 ## 2. 类型
-javascript的数据类型一共有八种
-Number, String, Object, Null, Boolean, Symbol, Undefined, bigInt,其中Object为复杂数据类型
-typeof 检测null类型为object。
 
-## 3. js的数据是如何存储的
-在js的执行过程中，主要有三种类型内存空间。分别是代码空间、栈空间和堆空间。代码空间主要用于存储可执行代码。
-栈空间用于存储执行上下文，当一段代码执行时，需要先编译，并创建执行上下文，然后按照顺序执行代码，当判断到 一个变量的值为引用类型时，js引擎不会直接将该对象存放到环境变量里，而是将他分配到堆空间里面去，并为变量分配一个指向该堆空间的地址，当js需要访问该数据的时候，是通过栈中的引用地址来访问的。
+javascript 的数据类型一共有八种
+Number, String, Object, Null, Boolean, Symbol, Undefined, bigInt,其中 Object 为复杂数据类型
+typeof 检测 null 类型为 object。
+
+## 3. js 的数据是如何存储的
+
+在 js 的执行过程中，主要有三种类型内存空间。分别是代码空间、栈空间和堆空间。代码空间主要用于存储可执行代码。
+栈空间用于存储执行上下文，当一段代码执行时，需要先编译，并创建执行上下文，然后按照顺序执行代码，当判断到 一个变量的值为引用类型时，js 引擎不会直接将该对象存放到环境变量里，而是将他分配到堆空间里面去，并为变量分配一个指向该堆空间的地址，当 js 需要访问该数据的时候，是通过栈中的引用地址来访问的。
 那么为什么其他变量会把数据存在栈中，引用类型却要放在堆中？
-因为js引擎需要用栈来维护程序执行期间的上下文的状态，如果栈空间大了的话，所有的数据都存放在栈里面，会影响到上下切换的效率进而影响到整个程序的执行效率。
+因为 js 引擎需要用栈来维护程序执行期间的上下文的状态，如果栈空间大了的话，所有的数据都存放在栈里面，会影响到上下切换的效率进而影响到整个程序的执行效率。
 
 在 js 的执行过程中，主要有三种类型内存空间。分别是代码空间、栈空间和堆空间。代码空间主要用于存储可执行代码。
 栈空间用于存储执行上下文，当一段代码执行时，需要先编译，并创建执行上下文，然后按照顺序执行代码，当判断到 一个变量的值为引用类型时，js 引擎不会直接将该对象存放到环境变量里，而是将他分配到堆空间里面去，并为变量分配一个指向该堆空间的地址，当 js 需要访问该数据的时候，是通过栈中的引用地址来访问的。
@@ -156,13 +157,16 @@ console.log(bar.getName());
 ## 4. 隐式转换规则
 
 ## 5. 精确获取页面元素位置的方式
+
 1. getBoundingClientRect()
 
 1. getBoundingClientRect()
 
 ## . for while forEach map for of 谁的效率更高
-forEach map for of这类ES6的方法效率并没有for while传统语法更快，
-传统的for循环为: 
+
+forEach map for of 这类 ES6 的方法效率并没有 for while 传统语法更快，
+传统的 for 循环为:
+
 ```javascript
 第一种
 for(var i = 0; i < testData.length; i++){
@@ -222,6 +226,7 @@ map()按照原始数组元素顺序依次处理元素；forEach()遍历数组的
 所以说 map 的执行效率还要慢于 forEach
 
 ## 7. 如何转换一个类数组对象，大致原理是怎么样的
+
 类数组对象是一个具有长度的对象。
 要将一个类数组对象转换为一个真正的数组，必须具备以下条件：
 （1）该类数组对象必须具有 length 属性，用于指定数组的长度。如果没有 length 属性，那么转换后的数组是一个空数组。
@@ -320,45 +325,57 @@ if (!Array.from) {
 ```
 
 ## 8. 如何获取精度更高的时间
+
 - 浏览器使用 performance.now() 可以获取到 performance.timing.navigationStart 到当前时间之间的微秒数
 - Node.js 使用 process.hrtime 返回一个数组，其中第一个元素的时间以秒为单位，第二个元素为剩余的纳秒
 
-## 9. null和undefined的区别
-- null表示一个无的对象，表示该处不应该有值，而undefined表示未定义。
-- 转换为数字时的结果不同。Number(null)为0， Number(undefined)为NaN.
+## 9. null 和 undefined 的区别
+
+- null 表示一个无的对象，表示该处不应该有值，而 undefined 表示未定义。
+- 转换为数字时的结果不同。Number(null)为 0， Number(undefined)为 NaN.
 
 使用的场景上：
 null:
+
 - 作为函数的参数，表示该函数的参数不是对象。
 - 作为对象原型链的终点。
 
 undefined：
-- 变量被声明初始化后但未进行赋值时的值为undefined
-- 调用函数时，应该提供的参数并没有被赋值时，参数为undefined
-- 对象没有赋值属性， 该属性的值为undefined
-- 函数没有返回值时，默认返回undefined
 
-## 10. document、window、html、body的层级关系
+- 变量被声明初始化后但未进行赋值时的值为 undefined
+- 调用函数时，应该提供的参数并没有被赋值时，参数为 undefined
+- 对象没有赋值属性， 该属性的值为 undefined
+- 函数没有返回值时，默认返回 undefined
+
+## 10. document、window、html、body 的层级关系
+
 window > document > html > body
-- window是BOM的核心对象，它一方面用来获取或设置浏览器的属性和行为，另一方面作为全局对象提供方法。
-- document对象是一个和文档相关的对象，拥有一些操作文档内容的功能。但是地位没有window高。
-- html元素对象和document元素对象是属于html文档的dom对象。
 
-## 11. addEventListener函数的第三个参数
-第三个参数涉及到冒泡和捕获，true为捕获，false为冒泡。
+- window 是 BOM 的核心对象，它一方面用来获取或设置浏览器的属性和行为，另一方面作为全局对象提供方法。
+- document 对象是一个和文档相关的对象，拥有一些操作文档内容的功能。但是地位没有 window 高。
+- html 元素对象和 document 元素对象是属于 html 文档的 dom 对象。
+
+## 11. addEventListener 函数的第三个参数
+
+第三个参数涉及到冒泡和捕获，true 为捕获，false 为冒泡。
 
 ## 12. 所有的时间都有冒泡吗？
+
 并不是所有的事件都有冒泡的，例如
+
 - onblur
 - onfocus
 - onmouseenter
 - onmouseleave
 
-## 13. typeof 为什么对null错误显示
-这是JS的一个BUG，在JS最初的版本中使用的是32位系统，为了性能考虑使用低位存储变量的类型信息，000开头代表是对象然而null显示为全零，所以将他错误判断为object
+## 13. typeof 为什么对 null 错误显示
 
-## 14. class的原型
-类的所有方法都定义在类的prototype属性上面。
+这是 JS 的一个 BUG，在 JS 最初的版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象然而 null 显示为全零，所以将他错误判断为 object
+
+## 14. class 的原型
+
+类的所有方法都定义在类的 prototype 属性上面。
+
 ```javascript
 class cat{
   constructor(){}
@@ -375,24 +392,26 @@ cat.prototype = {
   b(){}
 }
 ```
-当你使用class的时候，它会默认调用constructor这个函数，来接受一些参数，并构造出一个新的实例对象this，并将他返回。如果你的class没有定义constructor，也会隐式的生成一个constructor方法。
+
+当你使用 class 的时候，它会默认调用 constructor 这个函数，来接受一些参数，并构造出一个新的实例对象 this，并将他返回。如果你的 class 没有定义 constructor，也会隐式的生成一个 constructor 方法。
 
 ```javascript
-class cat{
-  constructor(){
-    let moqiduo = true ; // 在constructor中let的变量 只存在于constructor这个构造函数中
-    this.name = 'cd';  //在constructor中this的属性和方法都会被定义到实例上
+class cat {
+  constructor() {
+    let moqiduo = true; // 在constructor中let的变量 只存在于constructor这个构造函数中
+    this.name = "cd"; //在constructor中this的属性和方法都会被定义到实例上
   }
-  a(){} // class中定义一个方法。会被添加到原型对象prototype上。
+  a() {} // class中定义一个方法。会被添加到原型对象prototype上。
   b = 3;
-  c = function(){} // 用=来定义方法或属性，会被添加到实例上
+  c = function() {}; // 用=来定义方法或属性，会被添加到实例上
 }
 
-let cc = new cat()
-console.log(cc) // cat {name:cd, b:3, c:f}
+let cc = new cat();
+console.log(cc); // cat {name:cd, b:3, c:f}
 ```
 
-class的静态方法
+class 的静态方法
+
 ```javascript
 class Cat(){
   static name = "这是cat类"
@@ -401,107 +420,127 @@ Cat.type = function(){ return '加菲' }
 
 ```
 
-class与function又有一定的区别
-类不存在变量提升的机制，若是在类定义之前使用new xx()  就会报错，不能再类初始化之前使用。尽管类的本质也是一个函数。
+class 与 function 又有一定的区别
+类不存在变量提升的机制，若是在类定义之前使用 new xx() 就会报错，不能再类初始化之前使用。尽管类的本质也是一个函数。
 
-若在class中存在两个相同的属性或者方法会怎么样呢？
+若在 class 中存在两个相同的属性或者方法会怎么样呢？
+
 ```javascript
-class Cat{
+class Cat {
   constructor() {
-    this.name="cd"
+    this.name = "cd";
   }
-  name="sbdyf"
-  getName=function() {
-    console.log(this.name)
-  }
+  name = "sbdyf";
+  getName = function() {
+    console.log(this.name);
+  };
 }
-let i = new Cat()
-i.getName()
+let i = new Cat();
+i.getName();
 //输出cd
 ```
-可以看出constructor中定义的相同名称的属性和方法会覆盖在class里定义的
+
+可以看出 constructor 中定义的相同名称的属性和方法会覆盖在 class 里定义的
 
 ### 总结
-- 当使用class时，会默认调用constructor函数来接受一些参数，并构造出一个新的实例对象（this）返回。
-- 类的本质也是一个函数。
-- 在constructor中定义的变量 只存在于constructor这个构造函数中。
-- 在constructor中this定义的属性和方法都会被定义到实例上。
-- 在class里使用 = 来定义的方法或属性都会被定义在实例上。
-- 在class中书写的方法会被定义到该类的原型对象prototype上。
-- 在class里使用static时可以定义静态方法、变量，是添加在类本身而不是实例对象。
-- class生成的实例对象，也会沿着原型链查找。
 
-## 15. function的原型
-```javascript 
+- 当使用 class 时，会默认调用 constructor 函数来接受一些参数，并构造出一个新的实例对象（this）返回。
+- 类的本质也是一个函数。
+- 在 constructor 中定义的变量 只存在于 constructor 这个构造函数中。
+- 在 constructor 中 this 定义的属性和方法都会被定义到实例上。
+- 在 class 里使用 = 来定义的方法或属性都会被定义在实例上。
+- 在 class 中书写的方法会被定义到该类的原型对象 prototype 上。
+- 在 class 里使用 static 时可以定义静态方法、变量，是添加在类本身而不是实例对象。
+- class 生成的实例对象，也会沿着原型链查找。
+
+## 15. function 的原型
+
+```javascript
 function A() {
   let i = 0; // 在函数内用var定义的就是私有的
   this.j = 1; // 在函数内用this承接的就是公有
 }
-A.prototype.prototypeProp = '我是构造函数原型对象上的属性'
-A.hello = 'cd'; //静态属性
-A.callme = function() { console.log('father') }; // 静态方法，位于构造函数上，并不能在实例中打印出
+A.prototype.prototypeProp = "我是构造函数原型对象上的属性";
+A.hello = "cd"; //静态属性
+A.callme = function() {
+  console.log("father");
+}; // 静态方法，位于构造函数上，并不能在实例中打印出
 
 let w = new A();
-console.log( w.i, w.j ) // undefind 1
-console.log( w.hello,A.hello) // undefind cd
-console.log( w.prototypeProp) // 定义在构造函数原型对象上的属性和方法虽然不能直接表现在实例对象上，但是实例对象却可以访问或者调用它们
+console.log(w.i, w.j); // undefind 1
+console.log(w.hello, A.hello); // undefind cd
+console.log(w.prototypeProp); // 定义在构造函数原型对象上的属性和方法虽然不能直接表现在实例对象上，但是实例对象却可以访问或者调用它们
 ```
 
 ### 遍历实例对象属性的三种方法:
-- 使用for...in...能获取到实例对象自身的属性和原型链上的属性
-- 使用Object.keys()和Object.getOwnPropertyNames()只能获取实例对象自身的属性
+
+- 使用 for...in...能获取到实例对象自身的属性和原型链上的属性
+- 使用 Object.keys()和 Object.getOwnPropertyNames()只能获取实例对象自身的属性
 - 可以通过.hasOwnProperty()方法传入属性名来判断一个属性是不是实例自身的属性
 
+## 16. Promise 规范浅忆
 
-## 16. Promise规范浅忆
 ### 状态
-promise有三个状态：分别是
-- pending:可以切换到fulfilled或rejected
-- fulfilled：不可迁移状态，必须有个不可变的value
-- rejected：不可迁移状态，必须有个不可变的reason
 
-### 实现一个promise
+promise 有三个状态：分别是
 
+- pending:可以切换到 fulfilled 或 rejected
+- fulfilled：不可迁移状态，必须有个不可变的 value
+- rejected：不可迁移状态，必须有个不可变的 reason
+
+### 实现一个 promise
 
 ## 17. 深浅拷贝
+
 ### 浅拷贝
+
 1. 简单的复制引用
+
 ```javascript
 function shallowClone(copyObj) {
   var obj = {};
-  for(let i in copyObj) {
+  for (let i in copyObj) {
     obj[i] = copyObj[i];
   }
   return obj;
 }
 ```
+
 2. Array.prototype.concat()
+
 ```javascript
-const arr = [1,2,3,4,[5,6]];
+const arr = [1, 2, 3, 4, [5, 6]];
 const copy = arr.concat(); // 利用concat()创建arr的副本
 ```
+
 3. Array.prototype.slice()
-slice和concat方法不修改原数组，只会返回一个潜复制了数组元素中的元素的新数组。
+   slice 和 concat 方法不修改原数组，只会返回一个潜复制了数组元素中的元素的新数组。
+
 ```javascript
-const arr = [1,2,3,4,[5,6]];
+const arr = [1, 2, 3, 4, [5, 6]];
 const copy = arr.concat(); // 利用slice()创建arr的副本
 ```
+
 4. Object.assign()
-把任意多个的源对象自身的可枚举属性拷贝给目标对象，然后返回目标对象。它是对单层的深拷贝，对于对象内的对象是浅拷贝。
+   把任意多个的源对象自身的可枚举属性拷贝给目标对象，然后返回目标对象。它是对单层的深拷贝，对于对象内的对象是浅拷贝。
+
 ```javascript
 i = Object.assign({}, j);
 ```
 
 ### 深拷贝
-1. JSON.stringify/parse方法
-JSON.stringify是将一个js值转成一个JSON字符串。
-JSON.parse是将一个JSON字符串专场一个js值或对象。
-使用该方法，若对象中存在undefined、function、symbol会在转换过程中被忽略。
+
+1. JSON.stringify/parse 方法
+   JSON.stringify 是将一个 js 值转成一个 JSON 字符串。
+   JSON.parse 是将一个 JSON 字符串专场一个 js 值或对象。
+   使用该方法，若对象中存在 undefined、function、symbol 会在转换过程中被忽略。
+
 ```javascript
-const cloneObj = JSON.parse(JSON.stringify({haha:'xixi'}));
+const cloneObj = JSON.parse(JSON.stringify({ haha: "xixi" }));
 ```
 
 2. 递归的方法
+
 ```javascript
 function deepClone(obj) {
     if(!obj || typeof obj !== 'object')return obj;
@@ -517,14 +556,16 @@ function deepClone(obj) {
                 //如果不是，简单复制
                 objClone[key] = obj[key];
             }
-        } 
+        }
     }
     return objClone;
 }
 ```
 
-## 18. 防抖and节流
+## 18. 防抖 and 节流
+
 ### 防抖
+
 ```javascript
 /**
  * @desc 函数防抖
@@ -540,7 +581,7 @@ function debounce(func, wait, immediate) {
     if (timeout) clearTimeout(timeout);
     if (immediate) {
       if (!timeout) {
-        func.apply(context,args);
+        func.apply(context, args);
       }
       timeout = setTimeout(() => {
         timeout = null;
@@ -550,14 +591,17 @@ function debounce(func, wait, immediate) {
         func.apply(context, args);
       }, wait);
     }
-  }
+  };
 }
 ```
 
 ### 节流
+
 对于节流，一般有两种方式可以实现，分别是时间戳版和定时器版。
+
 - 时间戳版的函数触发是在时间段内开始的时候。
 - 定时器版的函数触发是在时间段内结束的时候。
+
 ```javascript
 /**
  * @desc 函数节流
@@ -565,39 +609,40 @@ function debounce(func, wait, immediate) {
  * @param wait 延迟执行毫秒数
  * @param type 1 表时间戳版，2 表定时器版
  */
- function throttle(func, wait ,type) {
-   if (type === 1) {
-     let date = 0;
-   }
-   if (type === 2) {
-     let timer = null;
-   }
-   return function() {
-     let context = this;
-     let args = arguments;
-     if (type === 1) {
+function throttle(func, wait, type) {
+  if (type === 1) {
+    let date = 0;
+  }
+  if (type === 2) {
+    let timer = null;
+  }
+  return function() {
+    let context = this;
+    let args = arguments;
+    if (type === 1) {
       let newDate = new Date();
       if (newDate - date > wait) {
         func.apply(context, args);
         date = newDate;
       }
-     }
-     if (type === 2) {
-       if (!timeout) {
+    }
+    if (type === 2) {
+      if (!timeout) {
         timeout = setTimeout(() => {
           func.apply(context, args);
           timeout = null;
-        }, wait)
-       }
-     }
-   }
- }
+        }, wait);
+      }
+    }
+  };
+}
 ```
 
 ## 19. 如何阻止冒泡
+
 ```javascript
 function stopBubble(e) {
-  if(e && e.stopPropagation) {
+  if (e && e.stopPropagation) {
     e.stopPropagation();
   } else {
     // IE取消的方式
@@ -607,6 +652,7 @@ function stopBubble(e) {
 ```
 
 ## 20. 如何阻止默认时间
+
 ```javascript
 function stopDefault(e) {
   if (e && e.preventDefault) e.preventDefault();
@@ -615,68 +661,78 @@ function stopDefault(e) {
 }
 ```
 
-## 21. js的设计模式
+## 21. js 的设计模式
+
 ### 1. 单例模式
+
 概念：一个类只产生一个唯一的实例。因为在许多时候整个系统只需要拥有一个全局对象，这样有利于我们协调系统整体的行为。
 应用场景：如商城系统中购车对象是单例的。
+
 ```js
 function Person() {
-  if(!Person.instance) {
-    Person.instance = {}
+  if (!Person.instance) {
+    Person.instance = {};
   }
-  return Person.instance
+  return Person.instance;
 }
-p1=Person()
-p2=Person()
-p1===p2
+p1 = Person();
+p2 = Person();
+p1 === p2;
 ```
 
 ### 2. 工厂模式（构造函数模式）
+
 概念：由一个方法来决定到底要创建哪个类的实例
+
 ```js
 const factory = {
   createProductA() {
-    console.log('A')
+    console.log("A");
   },
   createProductB() {
-    console.log('B')
+    console.log("B");
   },
   createProductC() {
-    console.log('C')
+    console.log("C");
   },
   create(type) {
-    return new factory[type]
-  }
-}
+    return new factory[type]();
+  },
+};
 ```
 
 ### 3. 策略模式
+
 概念：每个问题都提前想好对应的解决方案（一种映射关系）
+
 ```js
-// 封装的策略算法 
+// 封装的策略算法
 const money = {
-  'S':(salary) => {
+  S: (salary) => {
     return salary * 4;
   },
-  'A':(salary) => {
+  A: (salary) => {
     return salary * 3;
   },
-  'B':(salary) => {
+  B: (salary) => {
     return salary * 2;
-  }
-}
+  },
+};
 
 // 具体的计算方法
 const calculateBonus = function(level, salary) {
-  return money[level](salary)
-}
+  return money[level](salary);
+};
 ```
 
 ### 4. 适配器方法
+
 概念：比如后台传给我们一个对象格式，我们要的是数组，就走这个适配器做一个转换。
 
 ### 5. 观察者模式 - 发布订阅模式
+
 概念：定义了一种一对多的关系，让多个观察者对象同时监听某一个发布者对象，这个发布者对象的状态发生改变时就会通知所有的观察者对象。
+
 ```
 function Observer() {
   this.subs = [];
@@ -692,45 +748,54 @@ Observer.prototype.notify = (msg) => {
 }
 ```
 
-
-
 ## 22. 0.1 + 0.2 是否等于 0.3
+
 ECMAScript 中的 Number 类型使用 IEEE754 标准来表示整数和浮点数值。所谓 IEEE754 标准，全称 IEEE 二进制浮点数算术标准，这个标准定义了表示浮点数的格式等内容。
 
-在 IEEE754 中，规定了四种表示浮点数值的方式：单精确度（32位）、双精确度（64位）、延伸单精确度、与延伸双精确度。像 ECMAScript 采用的就是双精确度，也就是说，会用 64 位字节来储存一个浮点数。
+在 IEEE754 中，规定了四种表示浮点数值的方式：单精确度（32 位）、双精确度（64 位）、延伸单精确度、与延伸双精确度。像 ECMAScript 采用的就是双精确度，也就是说，会用 64 位字节来储存一个浮点数。
+
 ```javascript
-function add(){
-    const args = [...argument];
-    let maxLen = Math.max.apply(null, args.map(item => {
-        const str = item.split('.')[1];
-        return str? str.length : 0;
-    } ))
-    return (
-        args.reduce((sum, cur) => sum + cur * 10 ** maxLen, 0) / 10 ** maxLen
-        )
+function add() {
+  const args = [...argument];
+  let maxLen = Math.max.apply(
+    null,
+    args.map((item) => {
+      const str = item.split(".")[1];
+      return str ? str.length : 0;
+    })
+  );
+  return args.reduce((sum, cur) => sum + cur * 10 ** maxLen, 0) / 10 ** maxLen;
 }
 ```
 
-## 23. 手写bind
+## 23. 手写 bind
+
 ```javascript
-Function.prototype.bind2 = function (context) {
-    if (typeof this !== "function") {
-      throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
-    }
-    var self = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-    var fNOP = function () {};
-    var fbound = function () {
-        self.apply(this instanceof self ? this : context, args.concat(Array.prototype.slice.call(arguments)));
-    }
-    fNOP.prototype = this.prototype;
-    fbound.prototype = new fNOP();
-    return fbound;
-}
+Function.prototype.bind2 = function(context) {
+  if (typeof this !== "function") {
+    throw new Error(
+      "Function.prototype.bind - what is trying to be bound is not callable"
+    );
+  }
+  var self = this;
+  var args = Array.prototype.slice.call(arguments, 1);
+  var fNOP = function() {};
+  var fbound = function() {
+    self.apply(
+      this instanceof self ? this : context,
+      args.concat(Array.prototype.slice.call(arguments))
+    );
+  };
+  fNOP.prototype = this.prototype;
+  fbound.prototype = new fNOP();
+  return fbound;
+};
 ```
 
-## 24. DOM操作-添加删除移动复制创建查找结点
+## 24. DOM 操作-添加删除移动复制创建查找结点
+
 - 创建新节点
+
 ```js
 createDocumentFragment();
 createElement();
@@ -738,6 +803,7 @@ createTextNode();
 ```
 
 - 添加、移除、替换、插入
+
 ```js
 appendChild(node)  // 注意 如果是已有的dom元素 会把之前的dom元素删除
 removeChild(node)
@@ -746,34 +812,41 @@ insertBefore(new, old)
 ```
 
 - 查找
+
 ```js
 getElementById();
-getElementByName()
-getElementByTagName()
-getElementByClassName()
-querySelector()
-querySelectorAll()
+getElementByName();
+getElementByTagName();
+getElementByClassName();
+querySelector();
+querySelectorAll();
 ```
 
 - 属性操作
+
 ```js
-getAttribute(key)
-setAttribute(key, value)
-hasAttribute(key)
-removeAttribute(key)
+getAttribute(key);
+setAttribute(key, value);
+hasAttribute(key);
+removeAttribute(key);
 ```
 
-## 25. js延迟加载的方式有哪些？
-js的加载、解析和执行会阻塞页面的渲染过程，因此希望js脚本尽可能的延迟加载，提高页面渲染速度。
-1. 将js脚本放在文档的底部，来使js脚本尽可能的在最后加载执行。
-2. 给js脚本增加defer属性，这个属性会让脚本的加载与文档的解析同步解析，然后再文档解析完成后再执行这个脚本文件，这样的话就能使页面渲染不被阻塞，多个设置了defer属性的脚本按照规范来说应该是最后按顺序执行的，但是在一些浏览器中可能不是这样。
-3. 给js脚本增加async属性，使脚本异步加载，不会阻塞页面的解析过程，但当脚本解析完成就会进行js脚本执行，如果这个时候文档没有解析完成，还是会造成阻塞。其执行顺序是不可预测的。
-4. 动态创建DOM标签的方式，可以对文档的加载事件进行监听，当文档加载完成后再动态的创建script标签来引入js脚本。
+## 25. js 延迟加载的方式有哪些？
 
-## 26. js的几种模块规范？
-js中现在比较成熟的有四种模块加载方案
-- 第一种是CommonJS方案，它通过require来引入模块，通过module.exports来定义模块的输出接口。这种模块加载方案是服务器端的解决方案，它是以同步的形式来引入模块的，认为模块就是对象，因为服务器端的文件都在本地磁盘，所以读取非常迅速，所以采用同步的方式进行加载是没有问题的。commonjs的这种加载称为“运行时加载”，因为只有运行时才能得到这个对象，导致完全没办法在编译时做“静态优化”，比如语法分析和类型检验，这是CommonJS的一大不足，只有等到该模块加载完成之后，后面的代码才有机会执行，哪怕后面并没有用到这个模块。如果是浏览器端，需要通过网络，如果网络出现异常，模块加载卡住，后面的代码就得不到运行，浏览器也会陷入假死状态，这种需要网络请求的情况，使用异步加载的方式更加合适。
-- 第二种是AMD方案，采用异步的形式加载模块，模块的记载不影响后面的语句的执行，所有依赖这个模块的语句都定义在一个回调函数里，等到加载完成后再执行回调函数。require.js实现了AMD规范。
+js 的加载、解析和执行会阻塞页面的渲染过程，因此希望 js 脚本尽可能的延迟加载，提高页面渲染速度。
+
+1. 将 js 脚本放在文档的底部，来使 js 脚本尽可能的在最后加载执行。
+2. 给 js 脚本增加 defer 属性，这个属性会让脚本的加载与文档的解析同步解析，然后再文档解析完成后再执行这个脚本文件，这样的话就能使页面渲染不被阻塞，多个设置了 defer 属性的脚本按照规范来说应该是最后按顺序执行的，但是在一些浏览器中可能不是这样。
+3. 给 js 脚本增加 async 属性，使脚本异步加载，不会阻塞页面的解析过程，但当脚本解析完成就会进行 js 脚本执行，如果这个时候文档没有解析完成，还是会造成阻塞。其执行顺序是不可预测的。
+4. 动态创建 DOM 标签的方式，可以对文档的加载事件进行监听，当文档加载完成后再动态的创建 script 标签来引入 js 脚本。
+
+## 26. js 的几种模块规范？
+
+js 中现在比较成熟的有四种模块加载方案
+
+- 第一种是 CommonJS 方案，它通过 require 来引入模块，通过 module.exports 来定义模块的输出接口。这种模块加载方案是服务器端的解决方案，它是以同步的形式来引入模块的，认为模块就是对象，因为服务器端的文件都在本地磁盘，所以读取非常迅速，所以采用同步的方式进行加载是没有问题的。commonjs 的这种加载称为“运行时加载”，因为只有运行时才能得到这个对象，导致完全没办法在编译时做“静态优化”，比如语法分析和类型检验，这是 CommonJS 的一大不足，只有等到该模块加载完成之后，后面的代码才有机会执行，哪怕后面并没有用到这个模块。如果是浏览器端，需要通过网络，如果网络出现异常，模块加载卡住，后面的代码就得不到运行，浏览器也会陷入假死状态，这种需要网络请求的情况，使用异步加载的方式更加合适。
+- 第二种是 AMD 方案，采用异步的形式加载模块，模块的记载不影响后面的语句的执行，所有依赖这个模块的语句都定义在一个回调函数里，等到加载完成后再执行回调函数。require.js 实现了 AMD 规范。
+
 ```js
 require([module], callback);
 第一个参数[module]，是一个数组，里面的成员就是要加载的模块；第二个参数callback，则是加载成功之后的回调函数。
@@ -781,36 +854,76 @@ require(['fs'], function(fs) {
   // to do something
 })
 ```
-但是AMD有一个缺陷，在程序正真执行的过程中，有些模块的加载其实是没有必要的，即使加载了，在之后的回调中也没有被用到，这样在一定程度上造成了浪费。就有了CMD规范
-- 第三种CMD方案。解决了AMD异步方案带来的问题(sea.js)。它的主要特点是允许你在使用模块的时候再去加载模块。
-- 第四种是Es6的方案，使用import 、 export、 export default 的形式来导入导出模块。
 
-### AMD和CMD的区别
-第一点AMD推崇依赖前置，在定义模块的时候就要声明其依赖的模块。而CMD推崇就近依赖，只有在用到某个模块的时候再去require
-第二点对依赖模块的执行时机处理不同。AMD在依赖模块加载完成后就直接执行依赖模块，依赖模块的执行顺序和我们书写的顺序不一定一致。而CMD在依赖模块加载完成后并不执行，只是下载而已，等到所有的依赖都加载好后，进入回调逻辑，遇到require语句时在执行对应的模块，与书写顺序保持一致。
+但是 AMD 有一个缺陷，在程序正真执行的过程中，有些模块的加载其实是没有必要的，即使加载了，在之后的回调中也没有被用到，这样在一定程度上造成了浪费。就有了 CMD 规范
+
+- 第三种 CMD 方案。解决了 AMD 异步方案带来的问题(sea.js)。它的主要特点是允许你在使用模块的时候再去加载模块。
+- 第四种是 Es6 的方案，使用 import 、 export、 export default 的形式来导入导出模块。
+
+### AMD 和 CMD 的区别
+
+第一点 AMD 推崇依赖前置，在定义模块的时候就要声明其依赖的模块。而 CMD 推崇就近依赖，只有在用到某个模块的时候再去 require
+第二点对依赖模块的执行时机处理不同。AMD 在依赖模块加载完成后就直接执行依赖模块，依赖模块的执行顺序和我们书写的顺序不一定一致。而 CMD 在依赖模块加载完成后并不执行，只是下载而已，等到所有的依赖都加载好后，进入回调逻辑，遇到 require 语句时在执行对应的模块，与书写顺序保持一致。
+
 ```js
 //amd
-define(['./a', './b'], (a,b) => {
-  a.xxx()
-  b.xxx()
-})
+define(["./a", "./b"], (a, b) => {
+  a.xxx();
+  b.xxx();
+});
 
 // cmd
 define((require, exports, module) => {
-  let a = require('./a')
-  a.xxx()
-  let b = require('./b')
-  b.xxx()
-})
+  let a = require("./a");
+  a.xxx();
+  let b = require("./b");
+  b.xxx();
+});
 ```
 
-### es6方案和commonjs的差别
-commonjs输出的是值的拷贝，es6是值的引用，当需要时才回去被加载的模块里取值。
-commonjs模块是运行时加载，es6模块是编译时输出接口。commonjs模块就是对象，即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上面读取方法，这种加载成为运行时加载，而es6模块不是对象，他的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+### es6 方案和 commonjs 的差别
 
-## 27. 如何回答js事件循环
-1. 首先js是单线程运行的，代码在运行时，会将不同函数的执行上下文按顺序加入栈中保证代码的有序执行。
+commonjs 输出的是值的拷贝，es6 是值的引用，当需要时才回去被加载的模块里取值。
+commonjs 模块是运行时加载，es6 模块是编译时输出接口。commonjs 模块就是对象，即在输入时是先加载整个模块，生成一个对象，然后再从这个对象上面读取方法，这种加载成为运行时加载，而 es6 模块不是对象，他的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+
+## 27. 如何回答 js 事件循环
+
+1. 首先 js 是单线程运行的，代码在运行时，会将不同函数的执行上下文按顺序加入栈中保证代码的有序执行。
 2. 在执行同步代码的过程中，如果函数内有定义异步的事件，不会阻塞代码的执行，而是将异步的事件挂起，继续执行执行栈的其他任务。
 3. 当同步时间执行完后，再将异步事件对应的回调加入到与当前执行栈不同的另一个任务队列中等待执行。
-4. 任务队列里又分为宏任务和微任务，它们的执行阶段也不同，当同步任务完成后，js引擎会判断微任务队列中是否有任务可以执行，有的话就压入栈中执行，执行完后再去执行宏任务。
+4. 任务队列里又分为宏任务和微任务，它们的执行阶段也不同，当同步任务完成后，js 引擎会判断微任务队列中是否有任务可以执行，有的话就压入栈中执行，执行完后再去执行宏任务。
 
+## 28. [node_modules 困境](https://zhuanlan.zhihu.com/p/137535779)
+
+###　术语：
+
+- package：包含了 package.json, 使用 package.json 定义的一个 package，通常是对应一个 module，也可以不包含 module，比如 bin 里指明一个 shell 脚本,甚至是任意文件（将 registry 当做 http 服务器使用，或者利用 unpkg 当做 cdn 使用）,一个 package 可以是一个 tar 包，也可以是本地 file 协议，甚至 git 仓库地址
+
+- module：能被 require 加载的就叫一个 module，如下都是 module，只有当 module 含有 package.json 的时候才能叫做 package, -　一个包含 package.json 且含有 main 字段的文件夹
+
+- 一个含有 index.js 的文件夹
+- 任意的 js 文件
+
+我们来看一下问题
+
+> 如果说在我们引入的插件中，A 插件依赖 C 的 2.0 版本， B 插件依赖 C 的 1.0 版本，该如何处理？如果是 C 插件本身不支持多版本共存，有的甚至会污染全局环境，那么就不可取了。
+
+###　 npm 获取模块的方式解决
+如何从 node_modules 加载 package
+核心是递归向上查找 node_modules 里的 package，如果在 '/home/ry/projects/foo.js' 文件里调用了 require('bar.js')，则 Node.js 会按以下顺序查找：
+
+- /home/ry/projects/node_modules/bar.js
+- /home/ry/node_modules/bar.js
+- /home/node_modules/bar.js
+- /node_modules/bar.js
+  该算法有两个核心
+
+```
+- 优先读取最近的 node_modules 的依赖
+- 递归向上查找 node_modules 依赖
+```
+
+如果说我们 node-modules 下面的插件中的 package 也安装了 C 的各个版本，比如又有一个 D 插件也依赖 C1.0 的版本，就会造成 node_modules 里充满了各种重复版本的 C 插件。造成了极大的空间浪费，也导致 npm install 很慢，这既是臭名昭著的 node_modules hell
+
+### require 的缓存机制
+node 会对加载的模块进行缓存，第一次加载某个模块后会将结果缓存下来，后续的 require 调用都返回同一结果，然而 node 的 require 的缓存并非是基于 module 名，而是基于 resolve 的文件路径的，且是大小写敏感的，这意味着即使你代码里看起来加载的是同一模块的同一版本，如果解析出来的路径名不一致，那么会被视为不同的 module，如果同时对该 module 同时进行副作用操作，就会产生问题。
