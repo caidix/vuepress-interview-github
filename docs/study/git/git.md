@@ -1,9 +1,18 @@
-# Git
+---
+title: Git知识点
+date: 2020-07-10
+tags:
+ - GitHub
+categories:
+ - GitHub
+ - 面试
+---
 
 前言：
 [一份值得收藏的 Git 异常处理清单](https://juejin.im/post/5edcf3a36fb9a047fa04fbc3)
 
-<img src="./git.jpg"/>
+<img src="./git.jpg" />
+
 - Workspace: 工作区
 - Index / Stage: 暂存区
 - Repository: 本地仓库
@@ -192,70 +201,80 @@ git revert HEAD^
 上面这行代码就会增加一条新的 commit，它的内容和倒数第二个 commit 是相反的，从而和倒数第二个 commit 相互抵消，达到撤销的效果。
 在 revert 完成之后，把新的 commit 再 push 上去，这个 commit 的内容就被撤销了。（revert 与前面说的 reset 最主要的区别是，这次改动只是被「反转」了，并没有在历史中消失掉，你的历史中会存在两条 commit ：一个原始 commit ，一个对它的反转 commit。
 
-## git如何关联账号
-```
+## git 如何关联账号
+
+```js
 git config user.name   --查看git当前配置用户名
 git config user.email  --查看git当前配置的邮箱
 git config user.name 名称 设置用户名
 git config user.email 邮箱 设置git邮箱
 ```
+
 全局命令设置
-```
+
+```js
  git config  --global user.name 你的目标用户名；
  git config  --global user.email 你的目标邮箱名;
 ```
 
 ## git 规范类型
+
 - feat：新功能（feature）
-- fix：修补bug
+- fix：修补 bug
 - docs：文档（documentation）
 - 0style： 格式（不影响代码运行的变动）
-- refactor：重构（即不是新增功能，也不是修改bug的代码变动）
+- refactor：重构（即不是新增功能，也不是修改 bug 的代码变动）
 - test：增加测试
 - chore：其他修改，比如构建过程或辅助工具的变动
 
 ## 本地工作区文件恢复
+
 git checkout <filename/dirname>
 
 ## 修改提交时的备注内容
+
 git commit --amend
 
 ## 修改分支名，实现无缝衔接
-例如，我们的想新建的分支名为 feature/story-13711，却写成了  feature/stor-13711：
-语法：git branch -m <oldbranch> <newbranch>
+
+例如，我们的想新建的分支名为 feature/story-13711，却写成了 feature/stor-13711：
+语法：git branch -m \<oldbranch> \<newbranch>
 命令：git branch -m feature/stor-13711 feature/story-13711
 
-## 撤销当前的commit操作
-语法： git reset --soft [<commit-id>/HEAD~n>]
+## 撤销当前的 commit 操作
+
+语法： git reset --soft [\<commit-id>/HEAD~n>]
 命令：git reset --soft HEAD~1
 
 用新的更改替换撤回的更改
 提交之中可能有些地方需要优化，我们可以撤销本次的 commit 以及文件暂存状态，修改之后再重新添加到暂存区进行提交。
-语法： git reset --mixed [<commit-id>/HEAD~n>]
+语法： git reset --mixed [\<commit-id>/HEAD~n>]
 命令：git reset --mixed HEAD~1
 
 本地提交了错误的文件
 本地将完全错误的，本不应提交的内容提交到了仓库，需要进行撤销，可以使用 --hard 参数
 
-语法： git reset --hard [<commit-id>/HEAD~n>]
+语法： git reset --hard [\<commit-id>/HEAD~n>]
 命令：git reset --hard HEAD~1
 文件的修改都会被撤销。-hard 参数需要谨慎使用。
 
 ## 撤销本地分支合并
+
 1. 将所有的合并内容的撤销到之前的样子
-git reset --hard
-2.将所有的合并撤销，并保留合并分支和撤回记录
-语法：git revert <commit-id>
-命令：git revert 700920
+   git reset --hard 2.将所有的合并撤销，并保留合并分支和撤回记录
+   语法：git revert \<commit-id>
+   命令：git revert 700920
 
 ## 恢复误删的本地分支
-误删的分支为 feature/delete，使用 git reflog 命令可查看到该仓库下的所有历史操作
-语法：git checkout -b <branch-name> <commit-id>
-命令：git checkout -b feature/delete HEAD@{2}
-命令执行完成后，分支恢复到 HEAD@{2} 的快照，即从 master 分支拉取 feature/delete 分支的内容，仍然缺少“新增xxx文件”的提交，直接将文件内容恢复到最新的提交内容，使用命令 git reset --hard HEAD@{1} 即可实现硬性覆盖本地工作区内容的目的。git reflog 命令获取到的内容为本地仓库所有发生过的变更，可谓恢复利器，既可向前追溯，亦可向后调整。
 
-## git对大小写不敏感，想修改文件的大小写并且与别的分支合并怎么办？
-- git config core.ignorecase false   关闭忽略大小写设置
-- git rm xxx   (删掉想更换大小写的文件，在这之前记得copy备份一个文件)
+误删的分支为 feature/delete，使用 git reflog 命令可查看到该仓库下的所有历史操作
+语法：git checkout -b \<branch-name> \<commit-id>
+命令：git checkout -b feature/delete HEAD@{2}
+命令执行完成后，分支恢复到 HEAD@{2} 的快照，即从 master 分支拉取 feature/delete 分支的内容，仍然缺少“新增 xxx 文件”的提交，直接将文件内容恢复到最新的提交内容，使用命令 git reset --hard HEAD@{1} 即可实现硬性覆盖本地工作区内容的目的。git reflog 命令获取到的内容为本地仓库所有发生过的变更，可谓恢复利器，既可向前追溯，亦可向后调整。
+
+## git 对大小写不敏感，想修改文件的大小写并且与别的分支合并怎么办？
+
+- git config core.ignorecase false 关闭忽略大小写设置
+- git rm xxx (删掉想更换大小写的文件，在这之前记得 copy 备份一个文件)
 - 修改备份文件名
 - git add commit push

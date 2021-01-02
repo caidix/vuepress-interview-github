@@ -1,14 +1,24 @@
-# 自定义指令
+---
+
+title: Vue工具
+date: 2020-07-18
+sidebar: auto
+tags:
+ - Vue
+categories:
+ - Vue
+---
+
+## 自定义指令
 
 > 编写 vue 的自定义指令可以使得许多事情变得轻松起来，只需要使用 v-xxx=“”并传入想要传入的参数即可。
 
-## 点击绑定指令外的元素关闭该元素
+### 点击绑定指令外的元素关闭该元素
 
 > 即 [clickoutside（v-clickoutside）](http://blog.cdhouse.top/article/detail?id=18##toc12)
 
-````javascript
-
-let nodeList = [];// 元素搜集器，会将页面中所有绑定了clickoutside指令的dom元素存储起来，方便控制管理
+```javascript
+let nodeList = []; // 元素搜集器，会将页面中所有绑定了clickoutside指令的dom元素存储起来，方便控制管理
 let seed = 0;
 let nowClickDom;
 const rtx = "@clickOutSide";
@@ -81,10 +91,10 @@ export default {
     delete el[rtx];
   },
 };
+```
 
-````
+### 点击数据上报
 
-## 点击数据上报
 ```javascript
 function reportClick(el, binding) {
    ajax....
@@ -103,15 +113,16 @@ export default = (Vue) => {
 
 ```
 
-## v-loading
+### v-loading
+
 ```javascript
-import Vue from 'vue'
-import LoadingComponent from './loading'
+import Vue from "vue";
+import LoadingComponent from "./loading";
 // 使用 Vue.extend构造组件子类
-const LoadingContructor = Vue.extend(LoadingComponent)
+const LoadingContructor = Vue.extend(LoadingComponent);
 
 // 定义一个名为loading的指令
-Vue.directive('loading', {
+Vue.directive("loading", {
   /**
    * 只调用一次，在指令第一次绑定到元素时调用，可以在这里做一些初始化的设置
    * @param {*} el 指令要绑定的元素
@@ -119,14 +130,14 @@ Vue.directive('loading', {
    */
   bind(el, binding) {
     const instance = new LoadingContructor({
-      el: document.createElement('div'),
-      data: {}
-    })
-    el.appendChild(instance.$el)
-    el.instance = instance
+      el: document.createElement("div"),
+      data: {},
+    });
+    el.appendChild(instance.$el);
+    el.instance = instance;
     Vue.nextTick(() => {
-      el.instance.visible = binding.value
-    })
+      el.instance.visible = binding.value;
+    });
   },
   /**
    * 所在组件的 VNode 更新时调用
@@ -136,7 +147,7 @@ Vue.directive('loading', {
   update(el, binding) {
     // 通过对比值的变化判断loading是否显示
     if (binding.oldValue !== binding.value) {
-      el.instance.visible = binding.value
+      el.instance.visible = binding.value;
     }
   },
   /**
@@ -144,12 +155,12 @@ Vue.directive('loading', {
    * @param {*} el
    */
   unbind(el) {
-    const mask = el.instance.$el
+    const mask = el.instance.$el;
     if (mask.parentNode) {
-      mask.parentNode.removeChild(mask)
+      mask.parentNode.removeChild(mask);
     }
-    el.instance.$destroy()
-    el.instance = undefined
-  }
-})
+    el.instance.$destroy();
+    el.instance = undefined;
+  },
+});
 ```

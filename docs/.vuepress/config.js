@@ -1,10 +1,39 @@
-const nav = require("./nav");
+const nav = require("./configs/nav");
+const blogConfig = require("./configs/blog-config");
+const audios = require("./configs/music");
 module.exports = {
+  dest: "blog",
+  theme: "reco",
   base: "/vuepress-interview-github/",
-  title: "cd-train-home",
-  description: "Vuepress blog demo",
-  head: [["link", { rel: "icon", href: "/assets/vue-logo.png" }]],
-
+  title: "CD-KNOWLEDGE-HOME",
+  description: "三天摸鱼两天晒网，还有两天可以用来睡觉！",
+  head: [
+    ["link", { rel: "icon", href: "/assets/vue-logo.png" }],
+    ["link", { rel: "manifest", href: "/manifest.json" }],
+    ["meta", { name: "theme-color", content: "#c93756" }],
+    ["meta", { name: "apple-mobile-web-app-capable", content: "yes" }],
+    [
+      "meta",
+      { name: "apple-mobile-web-app-status-bar-style", content: "black" },
+    ],
+    ["link", { rel: "apple-touch-icon", href: "/assets/vue-logo.png" }],
+    [
+      "link",
+      { rel: "mask-icon", href: "/assets/vue-logo.png", color: "#c93756" },
+    ],
+    [
+      "meta",
+      { name: "msapplication-TileImage", content: "/assets/vue-logo.png" },
+    ],
+    ["meta", { name: "msapplication-TileColor", content: "#000000" }],
+    [
+      "meta",
+      {
+        name: "viewport",
+        content: "width=device-width,initial-scale=1,user-scalable=no",
+      },
+    ],
+  ],
   configureWebpack: {
     resolve: {
       alias: {
@@ -16,21 +45,25 @@ module.exports = {
   },
   themeConfig: {
     logo: "/assets/icon.jpg",
+    author: "CD",
+    authorAvatar: "/assets/icon.jpg",
+    type: "blog",
     navbar: true,
     sidebar: "auto",
+    subSidebar: "auto",
     search: true,
     searchMaxSuggestions: 10,
     displayAllHeaders: true,
     // 你的GitHub仓库
     repo: "https://github.com/caidix",
     // 自定义仓库链接文字。
-    repoLabel: "My GitHub",
+    repoLabel: "GitHub",
     nav,
-
+    blogConfig,
+    sidebarDepth: 1,
+    lastUpdated: "最后更新时间",
     sidebar: {
-      "/guide/": ["" /* /guide/ */],
       "/study/": [
-        "",
         {
           title: "网络",
           children: ["/study/network/network.md"],
@@ -45,7 +78,13 @@ module.exports = {
         },
         {
           title: "Javascript/Typescript",
-          children: ["/study/javascript/javascript.md", "/study/javascript/typescript.md"],
+          children: [
+            "/study/javascript/javascript.md",
+            "/study/javascript/promise.md",
+            "/study/javascript/module.md",
+            "/study/javascript/eventDom.md",
+            // "/study/javascript/typescript.md",
+          ],
         },
         {
           title: "Vue",
@@ -56,12 +95,20 @@ module.exports = {
           children: ["/study/node.md"],
         },
         {
+          title: "webpack",
+          children: ["/study/webpack.md"],
+        },
+        {
           title: "Git",
           children: ["/study/git/git.md"],
         },
         {
           title: "算法",
-          children: ["/study/algorithm/algorithm.md","/study/algorithm/leetcode.md","/study/algorithm/func.md"],
+          children: [
+            "/study/algorithm/algorithm.md",
+            "/study/algorithm/leetcode.md",
+            "/study/algorithm/func.md",
+          ],
         },
       ],
       "/tools/": [
@@ -77,12 +124,29 @@ module.exports = {
           title: "react工具",
           children: ["/tools/react-tool.md"],
         },
-        {
-          title: "webpack",
-          children: ["/tools/webpack.md"],
-        }
       ],
+      "/views/": [""],
     },
-    plugins: ["@vuepress/back-to-top", "@vuepress/active-header-links"],
   },
+  markdown: {
+    lineNumbers: true,
+  },
+  plugins: [
+    [
+      require("./plugins/BgMusic"),
+      {
+        audios,
+      },
+    ],
+    [
+      "@vuepress/pwa",
+      {
+        serviceWorker: true,
+        updatePopup: {
+          message: "发现新内容可用",
+          buttonText: "刷新",
+        },
+      },
+    ],
+  ],
 };

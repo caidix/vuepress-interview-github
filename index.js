@@ -197,6 +197,7 @@ function quickSort(arr) {
   return quickSort(left).concat(keys, quickSort(right));
 }
 
-var arr = [3, 3, -5, 6, 0, 2, -1, -1, 3];
-console.log(arr);
-console.log(quickSort(arr));
+// var arr = [3, 3, -5, 6, 0, 2, -1, -1, 3];
+// console.log(arr);
+// console.log(quickSort(arr));
+
