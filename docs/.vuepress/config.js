@@ -83,6 +83,7 @@ module.exports = {
             "/study/javascript/promise.md",
             "/study/javascript/module.md",
             "/study/javascript/eventDom.md",
+            "/study/javascript/methods.md",
             // "/study/javascript/typescript.md",
           ],
         },
