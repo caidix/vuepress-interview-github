@@ -3,10 +3,10 @@ title: 前端模块化及进程
 date: 2020-12-20
 sidebar: auto
 tags:
-  - JavaScript
-  - Node
+ - JavaScript
+ - Node
 categories:
-  - JavaScript
+ - JavaScript
 ---
 
 ## [commonjs](https://javascript.ruanyifeng.com/nodejs/module.html)

@@ -1,15 +1,12 @@
-#
-
 ---
 
 title: Javascript 事件流
 date: 2020-12-20
 sidebar: auto
 tags:
-
-- JavaScript
-  categories:
-- JavaScript
+ - JavaScript
+categories:
+ - JavaScript
 
 ---
 
