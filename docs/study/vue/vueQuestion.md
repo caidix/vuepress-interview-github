@@ -1,17 +1,13 @@
 ---
-
 title: Vue 题解
 date: 2020-07-18
 sidebar: auto
 tags:
-- Vue
+  - Vue
 categories:
-- Vue
-- 面试
-
----
-
-## 1.什么是 MVVM?
+  - Vue
+  - 面试
+---## 什么是 MVVM?
 
 MVVM 是 model-view-ViewModel 的缩写，是一种基于前端开发的架构模式，核心是对 view 和 viewModel 的双向数据绑定。viewModel 是 view 和 model 层的桥梁，数据会绑定到 viewModel 层并自动将数据渲染到页面中。视图变化的时候会通知 viewModel 层更新数据.
 在 vue 中，将视图层的 dom 元素做数据劫持。通过 gettter 和 setter 暴露循环作用域下的变量，产生闭包。他能在内部让 vue 追踪依赖，在被访问和修改时通知变更。实现双向数据绑定。
@@ -26,7 +22,7 @@ MVVM 是 model-view-ViewModel 的缩写，是一种基于前端开发的架构�
 
 vue 采用数据劫持结合发布订阅者模式 通过 object. defineProperty()来劫持各个属性的 setget，数据变动时发布消息给订阅者，出发相应的监听回调（在 3. 0 中改用 proxy）
 
-## 2.VUE 的性能优化
+## VUE 的性能优化
 
 1. 编码阶段
 
@@ -55,7 +51,7 @@ vue 采用数据劫持结合发布订阅者模式 通过 object. defineProperty(
 - splitChunk 抽离公共文件
 - sourceMap 优化(dev:cheap-module-source-map, prod:source-map)
 
-## 3.css 样式穿透
+## css 样式穿透
 
 由于 scoped 属性的样式隔离，修改不到第三方组件的样式，需要做样式穿透（在 css 预处理器中使用才生效）
 
@@ -89,7 +85,7 @@ vue 采用数据劫持结合发布订阅者模式 通过 object. defineProperty(
 </style>
 ```
 
-## 4. 请详细说下你对 vue 生命周期的理解？
+## 请详细说下你对 vue 生命周期的理解？
 
 总共分为 8 个阶段创建前/后，载入前/后，更新前/后，销毁前/后
 
@@ -121,7 +117,7 @@ vue 采用数据劫持结合发布订阅者模式 通过 object. defineProperty(
 
 - beforeDestroy:可以写一个确认停止事件的确认框。
 
-## 5. data 是如何被访问的
+## data 是如何被访问的
 
 vue 在执行过程中，会将 data 和 prop 都挂载在 vm 实例上，这个时候源码做了一个判断，如果是相同的命名则会报错。在源码中，其对 data 中的元素进行了 proxy 代理：
 
@@ -166,14 +162,19 @@ export function createElement (
 
 ## virtual dom 的优势在哪里
 
-Dom 引擎、js 引擎相互独立，但又工作在同一线程，js 代码调用 dom api 必须挂起 js 引擎，转换传入参数数据、激活 dom 引擎，dom 重绘后再转换可能有的返回值，最后激活 js 引擎并继续执行若有频繁的 dom api 调用，且浏览器厂商不做“批量处理”优化。
-引擎间切换的单位代价将迅速积累若其中有强制重绘的 dom api 调用，重新计算布局、重新绘制图像会引起更大的性能消耗。
+> 重要的一点，虚拟 dom 赋予了在渲染到浏览器之前我们以编程方式构造、检查、克隆以及操作所需的 dom 结构的能力
+> Dom 引擎、js 引擎相互独立，但又工作在同一线程，js 代码调用 dom api 必须挂起 js 引擎，转换传入参数数据、激活 dom 引擎，dom 重绘后再转换可能有的返回值，最后激活 js 引擎并继续执行若有频繁的 dom api 调用，且浏览器厂商不做“批量处理”优化。
+> 引擎间切换的单位代价将迅速积累若其中有强制重绘的 dom api 调用，重新计算布局、重新绘制图像会引起更大的性能消耗。
 
 优势：
 
 1. 虚拟 dom 不会立马进行排版和重绘操作。
 2. 虚拟 dom 会在进行频繁修改过后一次性修改真实的 dom，减少操作真实 dom 频繁触发排版和重绘。
 3. 虚拟 dom 有效降低大面积真实 dom 的重绘和排版，因为最终与真实 dom 比较差异，可以只渲染局部。
+
+## 你对 template 与 jsx 写法的看法
+
+当我们在书写一些复杂的 ui 组件或是业务组件的时候，他们往往只含有少量的标签，却拥有大量的交互逻辑，在这种情况下，模版语法有时候会限制你更容易的表达潜在的逻辑，这个时候你会发现会有许多的逻辑你写在 template 中，还有许多的逻辑写在了 javascript 中。而 render 函数的写法允许我们把这些逻辑组合到一个地方。
 
 ## vue 核心源码简写
 
