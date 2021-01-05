@@ -89,7 +89,12 @@ module.exports = {
         },
         {
           title: "Vue",
-          children: ["/study/vue/vue.md","/study/vue/vue3.0.md", "/study/vue/vueQuestion.md"],
+          children: [
+            "/study/vue/vue.md",
+            "/study/vue/vue3.0.md",
+            "/study/vue/vueQuestion.md",
+            "/study/vue/vueMounted.md",
+          ],
         },
         {
           title: "Nodejs",
