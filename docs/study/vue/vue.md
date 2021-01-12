@@ -138,6 +138,8 @@ Vue.use(cdui);
 
 ## 使用 JS 挂载使用组件（如 EL-Message）
 
+extend 配合\$mount 挂载
+
 > 这里使用 Message 组件源码来理解
 
 ```js
@@ -239,4 +241,18 @@ Message.closeAll = function() {
   }
 };
 export default Message;
+```
+
+newVue 实例挂载
+
+```js
+import Vue from "vue";
+import xxx from "xxx.vue";
+export function init() {
+  const container = document.createELement("div");
+  document.body.appendChild(container);
+  new Vue({
+    render: (h) => h(xxx),
+  }).$mount(container);
+}
 ```
