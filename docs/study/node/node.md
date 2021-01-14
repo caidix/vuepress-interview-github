@@ -1,14 +1,12 @@
 ---
-
 title: node知识点
 date: 2020-07-18
 sidebar: auto
 tags:
-- Node
+  - Node
 categories:
-- Node
-- 面试
-
+  - Node
+  - 面试
 ---
 
 ## node
@@ -42,11 +40,7 @@ javascript 就是属于单线程，程序按顺序执行。若存在队列中，
 1. node 中的进程
    node 中的进程 Process 是一个全局对象。
 
-## 3. node 中的模块
-
-fs 模块是唯一一个同时提供同步和异步 api 的模块。
-
-### 流 stream
+## 流 stream
 
 - stdin:标准输入
 - stdout:标准输出
@@ -64,10 +58,266 @@ stream.on('end', function (chunk) {
 })
 ```
 
-### 工作目录
+## 工作目录
 
 - \_\_dirname 获取执行文件时该文件在文件系统中所在的目录
 - process.cwd()获取程序运行时当前的工作目录
 - process.chdir()更改工作目录
 - process.env 变量访问 shell 环境下的变量
 - process.exit 推出
+
+## 常用方法
+
+> [promisify](http://nodejs.cn/api/util.html#util_util_promisify_original): 传入一个遵循常见的错误优先的回调风格的函数（即以 (err, value) => ... 回调作为最后一个参数），并返回一个返回 promise 的版本。
+
+```js
+import { promisify } = require('utils');
+import fs = require('fs');
+const readfile = promisify(fs);
+
+app.use(async ctx => {
+  try {
+    ctx.body = await readFile(resolve(__dirname, 'test.json'));
+  } catch(err) { ctx.body = err };
+});
+```
+
+## Node 开启 https 服务
+
+> node 开启 https 服务需要两步：一是生成签名证书，二是还需借助 Node.js 提供的系统模块 HTTPS 完成。通常在企业中面向公网使用的证书通常是由全球权威 CA 机构签发的证书，受各大浏览器厂商信任。在开发测试时为了简单点我们可以自签名证书，但是这在浏览器中打开时会有安全问题提示。
+
+1. 使用 openssl 的 genrsa 命令生成一个服务器私钥文件
+
+```js
+# genrsa 生成密钥
+# -out 指定输出的文件
+openssl genrsa -out server.key 2048
+```
+
+2. 生成证书请求文件
+
+```js
+# -new 执行生成新的证书请求
+# -key 指定输入的密钥
+openssl req -new -key server.key -out server.csr
+
+# 会有以下交互提示，Common Name 这个可以自定域名，修改 hosts 文件域名映射即可。
+Country Name (2 letter code) []:CN
+State or Province Name (full name) []:ShangHai
+Locality Name (eg, city) []:ShangHai
+Organization Name (eg, company) []:Node.js
+Organizational Unit Name (eg, section) []:
+Common Name (eg, fully qualified host name) []:test.https.com
+Email Address []:
+```
+
+3. 根据第 2 步的证书请求文件和第 1 步的服务器私钥文件生成证书
+
+```js
+# x509 根据现有的证书请求生成自签名根证书
+# -days 设置证书的有效天数
+# -in 指定输入证书请求文件
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+```
+
+成功之后会生成如下 3 个文件：
+
+- key 是服务器上的私钥文件。
+- csr 是证书请求签名文件，用于提交给证书颁发机构 CA。
+- crt 是证书颁发机构 CA 签名后的证书。
+
+4. 使用 Node.js 中 HTTPS 模块开启一个服务
+
+```js
+// app.js
+const https = require("https");
+const fs = require("fs");
+const PORT = 8443;
+const options = {
+  key: fs.readFileSync("./server.key"),
+  cert: fs.readFileSync("./server.crt"),
+};
+
+https
+  .createServer(options, (req, res) => {
+    res.writeHead(200);
+    res.end("Hello World!");
+  })
+  .listen(PORT, () => console.log(`App listening on port ${PORT}!`));
+
+// express
+
+const express = require("express");
+const https = require("https");
+const fs = require("fs");
+const app = express();
+const PORT = 8443;
+const options = {
+  key: fs.readFileSync("./server.key"),
+  cert: fs.readFileSync("./server.crt"),
+};
+
+https
+  .createServer(options, app)
+  .listen(PORT, () => console.log(`App listening on port ${PORT}!`));
+
+app.get("/", (req, res) => res.send("Hello World!"));
+```
+
+## window 和 mac 下设置 NODE_ENV 变量
+
+> 采用在 package.json 中设置变量的方式
+
+- mac: export XXX=XXX
+- window: set XXX=XXX
+
+```js
+"scripts": {
+   "start": "set NODE_ENV=development && nodemon -w src --exec \"babel-node src\"",
+   "build": "babel src --out-dir dist",
+   "run-build": "node dist",
+   "test": "echo \"Error: no test specified\" && exit 1"
+ }
+```
+
+## socket.io 如何与 koa/egg 配合使用
+
+我们都知道完整的 socket.io 通信由两部分组成:
+
+与 NodeJS HTTP 服务器集成（或安装在其上）的 socket.io
+在浏览器端加载的客户端库 socket.io-client
+如果我们直接使用 koa 或者 egg, 我们需要将它们内部集成的 http 和 socket.io 做兼容, 此时我们可以这样处理:
+
+```js
+import koa from "koa";
+import http from "http";
+
+const app = new koa();
+const server = http.createServer(app.callback());
+const io = require("socket.io")(server);
+//  正常的业务处理
+// io
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("doc load", (msg) => {
+    console.log("doc load", msg);
+    io.emit("getData", users);
+  });
+});
+
+server.listen(3000, () => {
+  // ...
+});
+```
+
+## nodejs 创建定时任务
+
+> 使用 node-schedule 工具包。Node Schedule 是用于 Node.js 的灵活的 cron 类和非 cron 类作业调度程序。它允许我们使用可选的重复规则来安排作业（任意函数）在特定日期执行。它在任何给定时间仅使用一个计时器（而不是每秒钟/分钟重新评估即将到来的作业）。
+
+```js
+let schedule = require("node-schedule");
+
+let testJob = schedule.scheduleJob("42 * * * *", function() {
+  console.log("将在未来的每个时刻的42分时执行此代码, 比如22:42, 23:42");
+});
+```
+
+## nodejs 读取大文件报错解决方案
+
+在 nodejs 中 我们可以使用两种方式来读写文件, 如下:
+
+fs.readFile() 一次性将文件读取进内存中, 如果文件过大会导致 node 内存不够而报错
+fs.createReadStream() 以文件流的方式读取, 此时可以不用担心文件的大小
+由以上介绍可知如果我们要读取的文件可能会很大(比如视频等大文件), 我们一开始就要使用 fs.createReadStream(), 其实如果我们需要对文件进行解析, 比如要对简历等文件进行逐行解析提取关键语料, 我们可以使用 node 的 readline 模块, 此时我们就可以对文件进行逐行读取并解析, 如下案例:
+
+```js
+const fs = require("fs");
+const path = require("path");
+const readline = require("readline");
+
+const readlineTask = readline.createInterface({
+input: fs.createReadStream(path.join(\_\_dirname, './h5-dooring')),
+});
+
+readlineTask.on('line', function(chunk) {
+// 读取每一行数据
+});
+
+readlineTask.on('close', function() {
+//文件读取结束的逻辑
+}
+```
+
+## nodejs 如何开启 gzip 优化网站性能
+
+对于 nodejs 开启 gzip 的操作也属于 node 性能优化的一部分, 经过这样的处理可以让我们的网站加载更快, 我们可以使用 koa 的 koa-compress 中间件来实现 gzip 功能. 具体实现如下:
+
+```js
+import koa from "koa";
+import compress from "koa-compress";
+
+const app = new koa();
+// 开启 gzip
+const options = { threshold: 2048 };
+app.use(compress(options));
+```
+
+## 父子进程通信
+
+```js
+// child.js
+function computedTotal(arr, cb) {
+  // 耗时计算任务
+}
+
+// 与主进程通信
+// 监听主进程信号
+process.on("message", (msg) => {
+  computedTotal(bigDataArr, (flag) => {
+    // 向主进程发送完成信号
+    process.send(flag);
+  });
+});
+
+// main.js
+const { fork } = require("child_process");
+
+app.use(async (ctx, next) => {
+  if (ctx.url === "/fetch") {
+    const data = ctx.request.body;
+    // 通知子进程开始执行任务,并传入数据
+    const res = await createPromisefork("./child.js", data);
+  }
+
+  // 创建异步线程
+  function createPromisefork(childUrl, data) {
+    // 加载子进程
+    const res = fork(childUrl);
+    // 通知子进程开始work
+    data && res.send(data);
+    return new Promise((reslove) => {
+      res.on("message", (f) => {
+        reslove(f);
+      });
+    });
+  }
+
+  await next();
+});
+```
+
+## node 端实现图片编辑/压缩
+
+```js
+const images = require("images");
+
+images("input.jpg") //加载图像文件
+  .size(400) //等比缩放图像到400像素宽
+  .draw(images("logo.png"), 10, 10) //在(10,10)处绘制Logo
+  .save("output.jpg", {
+    //保存图片到文件,图片质量为50
+    quality: 50,
+  });
+```
+
+## node 使用爬虫

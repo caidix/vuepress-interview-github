@@ -46,3 +46,10 @@ sidebar: auto
 - [Nuxt](https://www.nuxtjs.cn/)
 - [materialIcon](https://material.iconhelper.cn/?p=4)
 - [第三方拖拽库](https://github.com/arguiot/DisplayJS)
+
+## Node 文章
+
+- [Nodejs Stream pipe 的使用与实现原理分析](https://mp.weixin.qq.com/s/NoIMXpI4buTVaXGFVhD8tA)
+- [Node+Redis 进行 API 速率限制的方法介绍](https://codeburst.io/api-rate-limiting-with-node-and-redis-95354259c768)
+- [使用 NodeJS 实现 JWT 原理](https://mp.weixin.qq.com/s/RbDGbFaSk5BD0vTDaLiOWQ)
+- [Node 开发实践总结-定时脚本的设计与实现](https://mp.weixin.qq.com/s/a_kIRvJUuICtw0CG7EFAtg)
