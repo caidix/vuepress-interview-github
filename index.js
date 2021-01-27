@@ -201,3 +201,6 @@ function quickSort(arr) {
 // console.log(arr);
 // console.log(quickSort(arr));
 
+const path = require('path')
+console.log(path.parse('D:/DaimaKu/vuepress/vuepress-interview-github/index.js'))
+console.log(path.dirname('/koala/Desktop/程序员成长指北/代码pra/node核心API'))

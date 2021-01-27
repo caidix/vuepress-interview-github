@@ -8,6 +8,33 @@ categories:
   - JavaScript
 ---
 
+## 单例模式
+
+```js
+var proxySingleton = (function() {
+  var singer = null;
+  return function(Func) {
+    if (!singer) {
+      singer = new Func();
+    }
+    return singer;
+  };
+})();
+
+class Singleton {
+  constructor(name) {
+    this.name = name;
+    this.instance = null;
+  }
+  static getInstance(name) {
+    if (!this.instance) {
+      this.instance = new Singleton(name);
+    }
+    return this.instance;
+  }
+}
+```
+
 ## 发布订阅模式
 
 ```ts

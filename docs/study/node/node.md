@@ -58,13 +58,40 @@ stream.on('end', function (chunk) {
 })
 ```
 
-## 工作目录
+## 工作目录 path
 
 - \_\_dirname 获取执行文件时该文件在文件系统中所在的目录
-- process.cwd()获取程序运行时当前的工作目录
+- process.cwd()获取 node 命令发起所在的文件夹的绝对路径
 - process.chdir()更改工作目录
 - process.env 变量访问 shell 环境下的变量
-- process.exit 推出
+- process.exit 退出
+- ./: 在 require（）方法内作用和 dirname 相同，其他情况下和 cwd（）相同
+
+1. path.normalize 规范化路径
+2. path.join()
+
+   > 路径拼接，Unix 系统是/，Windows 系统是\。如果传入的为空字符串，则返回 '.',代表当前文件夹，如果传入非字符串则会报错
+
+3. path.parse()
+
+   > 返回一个对象，对象是传入的字符串拆分的路径
+
+   ```js
+   const path = require("path");
+   path.parse('D:/DaimaKu/vuepress/vuepress-interview-github/index.js');
+   {
+    root: 'D:/',      // 代表根目录
+    dir: 'D:/DaimaKu/vuepress/vuepress-interview-github', // 文件所在的文件夹
+    base: 'index.js', // 一整个文件
+    ext: '.js',       // 文件名后缀
+    name: 'index'     // 文件名
+   }
+   ```
+
+4. path.basename() 顾名思义返回文件名
+5. path.dirname() 返回文件所在文件夹的完整路径
+6. path.extname() 返回文件后缀，没有会返回空，如果末尾是个., 也会返回.
+7. path.resolve()
 
 ## 常用方法
 
@@ -320,4 +347,112 @@ images("input.jpg") //加载图像文件
   });
 ```
 
-## node 使用爬虫
+## 本地拷贝 demo
+
+小文件拷贝
+
+```js
+// 文件拷贝 将data.txt文件中的内容拷贝到copyData.txt
+// 读取文件
+const fileName1 = path.resolve(__dirname, "data.txt");
+fs.readFile(fileName1, function(err, data) {
+  if (err) {
+    // 出错
+    console.log(err.message);
+    return;
+  }
+  // 得到文件内容
+  var dataStr = data.toString();
+
+  // 写入文件
+  const fileName2 = path.resolve(__dirname, "copyData.txt");
+  fs.writeFile(fileName2, dataStr, function(err) {
+    if (err) {
+      // 出错
+      console.log(err.message);
+      return;
+    }
+    console.log("拷贝成功");
+  });
+});
+```
+
+大文件分片读取
+
+```js
+// copy 方法
+function copy(src, dest, size = 16 * 1024, callback) {
+  // 打开源文件
+  fs.open(src, 'r', (err, readFd) => {
+    // 打开目标文件
+    fs.open(dest, 'w', (err, writeFd) => {
+      let buf = Buffer.alloc(size);
+      let readed = 0; // 下次读取文件的位置
+      let writed = 0; // 下次写入文件的位置
+
+      (function next() {
+        // 读取
+        fs.read(readFd, buf, 0, size, readed, (err, bytesRead) => {
+          readed += bytesRead;
+
+          // 如果都不到内容关闭文件
+          if (!bytesRead) fs.close(readFd, err => console.log('关闭源文件'));
+
+          // 写入
+          fs.write(writeFd, buf, 0, bytesRead, writed, (err, bytesWritten) => {
+            // 如果没有内容了同步缓存，并关闭文件后执行回调
+            if (!bytesWritten) {
+              fs.fsync(writeFd, err => {
+                fs.close(writeFd, err => return !err && callback());
+              });
+            }
+            writed += bytesWritten;
+
+            // 继续读取、写入
+            next();
+          });
+        });
+      })();
+    });
+  });
+}
+
+```
+
+使用 stream 实现文件拷贝
+
+```js
+const fs = require('fs')
+const path = require('path')
+
+// 两个文件名
+const fileName1 = path.resolve(__dirname, 'data.txt')
+const fileName2 = path.resolve(__dirname, 'data-bak.txt')
+// 读取文件的 stream 对象
+const readStream = fs.createReadStream(fileName1)
+// 写入文件的 stream 对象
+const writeStream = fs.createWriteStream(fileName2)
+// 通过 pipe执行拷贝，数据流转
+readStream.pipe(writeStream)
+// 数据读取完成监听，即拷贝完成
+readStream.on('end', function() {
+  console.log('拷贝完成')
+})
+
+```
+
+<!-- ## node 使用爬虫 -->
+
+## node 事件循环机制
+
+按优先级往下排，node 的事件循环分为以下几个阶段
+
+1. microtask queue: promise，nextTick
+2. timer queue: settimeout，setInterval
+3. I/O queue:I/O 操作
+4. check queue:setImmediate
+5. close queue: 任何 close 事件的回调函数
+
+- 对于 nextTick，Node 执行完所有同步任务，接下来就会执行 process.nextTick 的任务队列。微任务队列追加在 process.nextTick 队列的后面，也属于本轮循环。
+- 倘若在 timer queue 的队列阶段中再次使用到了例如 check queue 队列中的方法，由于该队列还没执行，会将方法放入本次循环的 check queue 中执行，这点需要注意。
+- 事件循环中的 setTimeOut 与 setImmediate，从优先级上来说 settimeout 会先一步执行，但实际上 setTimeout 的第二个参数设置为 0 时，Node 做不到 0 毫秒，最少也需要 1 毫秒，根据官方文档，第二个参数的取值范围在 1 毫秒到 2147483647 毫秒之间。也就是说，setTimeout(f, 0)等同于 setTimeout(f, 1)。如果执行时没到 1 毫秒，timer queue 阶段就会被跳过，从而先执行 checkqueue 的回调。

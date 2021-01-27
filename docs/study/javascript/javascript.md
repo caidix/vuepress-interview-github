@@ -2,10 +2,10 @@
 title: JavaScript知识点
 date: 2020-07-10
 tags:
- - JavaScript
+  - JavaScript
 categories:
- - JavaScript
- - 面试
+  - JavaScript
+  - 面试
 ---
 
 ## 1. JavaScript 中的垃圾回收和内存泄漏
@@ -938,3 +938,42 @@ commonjs 模块是运行时加载，es6 模块是编译时输出接口。commonj
 ### require 的缓存机制
 
 node 会对加载的模块进行缓存，第一次加载某个模块后会将结果缓存下来，后续的 require 调用都返回同一结果，然而 node 的 require 的缓存并非是基于 module 名，而是基于 resolve 的文件路径的，且是大小写敏感的，这意味着即使你代码里看起来加载的是同一模块的同一版本，如果解析出来的路径名不一致，那么会被视为不同的 module，如果同时对该 module 同时进行副作用操作，就会产生问题。
+
+## 28. 用 JS 实现 Ajax 并发请求控制
+
+```js
+function concurrentRequest(ajaxs = [], maxNums) {
+  // 请求总长度
+  const len = ajaxs.length;
+  const result = new Array(len).fill(false);
+  let count = 0;
+  return new Promise((resolve, reject) => {
+    while (count < maxNums) {
+      run();
+    }
+    function run() {
+      const currentIndex = count++;
+      if (currentIndex >= len) {
+        !result.includes(false) && resolve(result);
+        return;
+      }
+
+      const ajax = ajaxs[currentIndex];
+      ajax()
+        .then((res) => {
+          result[currentIndex] = res;
+          if (currentIndex < len) {
+            run();
+          }
+        })
+        .catch((err) => {
+          result[currentIndex] = err;
+          // 请求没有全部完成, 就递归
+          if (currentIndex < len) {
+            next();
+          }
+        });
+    }
+  });
+}
+```
