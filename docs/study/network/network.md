@@ -2,10 +2,10 @@
 title: 网络
 date: 2020-07-10
 tags:
- - NetWork
+  - NetWork
 categories:
- - NetWork
- - 面试
+  - NetWork
+  - 面试
 ---
 
 ## 1. 计算机网络的体系结构
@@ -270,7 +270,7 @@ sendJsonp({
 });
 ```
 
-2. cors 跨域资源共享（Cross-origin resource sharing）在发生跨域请求之前，发送了一个 OPTIONS 请求去询问服务器是否允许接下来的跨域请求
+2. [cors 跨域资源共享（Cross-origin resource sharing）](http://www.ruanyifeng.com/blog/2016/04/cors.html)在发生跨域请求之前，发送了一个 OPTIONS 请求去询问服务器是否允许接下来的跨域请求
    如果是简单请求，则不会触发预检，直接发出正常请求。
    OPTIONS 里有几个字段：
 
@@ -283,7 +283,7 @@ sendJsonp({
 - Access-Control-Allow-Origin:允许哪些域来访问（\*为所有域名下的请求）
 - Access-Control-Allow-Methods:允许哪些请求方式
 - Access-Control-Allow-Headers: 允许那些请求头字段
-- Access-Control-Allow-Credentials:是否允许携带 cookie
+- Access-Control-Allow-Credentials:它的值是一个布尔值，表示是否允许发送 Cookie。默认情况下，Cookie 不包括在 CORS 请求之中。设为 true，即表示服务器明确许可，Cookie 可以包含在请求中，一起发给服务器。这个值也只能设为 true，如果服务器不要浏览器发送 Cookie，删除该字段即可。
 - Access-Control-Max-Age： 服务器返回两者可通讯的有效期，在有效期内不需要再调用 OPTIONS 请求询问。
   对此，chrome 还做了优化：
   如果是一个简单请求，那就直接发起请求，只需在请求中加入 Origin 字段表明自己来源，在响应中检查 Access-Control-Allow-Origin，如果不符合要求就报错，不需要再单独询问了。
@@ -293,6 +293,25 @@ sendJsonp({
 - Content-Language
 - Last-Event-ID
 - Content-Type：(application/x-www-form-urlencoded、multipart/form-data、text/plain)
+
+withCredentials 属性
+
+> 上面说到，CORS 请求默认不发送 Cookie 和 HTTP 认证信息。如果要把 Cookie 发到服务器，一方面要服务器同意，指定 Access-Control-Allow-Credentials 字段。
+
+```js
+Access-Control-Allow-Credentials: true
+```
+
+另一方面，开发者必须在 AJAX 请求中打开 withCredentials 属性。
+
+```js
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+```
+
+否则，即使服务器同意发送 Cookie，浏览器也不会发送。或者，服务器要求设置 Cookie，浏览器也不会处理。
+
+但是，如果省略 withCredentials 设置，有的浏览器还是会一起发送 Cookie。这时，可以显式关闭 withCredentials。需要注意的是，如果要发送 Cookie，Access-Control-Allow-Origin 就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie 依然遵循同源政策，只有用服务器域名设置的 Cookie 才会上传，其他域名的 Cookie 并不会上传，且（跨源）原网页代码中的 document.cookie 也无法读取服务器域名下的 Cookie。
 
 cors 简单跨域请求代码示例
 
