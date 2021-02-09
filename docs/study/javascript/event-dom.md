@@ -1,0 +1,132 @@
+---
+
+title: Javascript 事件流
+date: 2020-12-20
+sidebar: auto
+tags:
+ - JavaScript
+categories:
+ - JavaScript
+
+---
+
+## 冒泡和捕获
+
+在 javascript 中，每当触发事件都会以 body -> div -> target -> div -> body 的形式进行，即是触发冒泡和捕获。在一个事件发生时，捕获过程跟冒泡过程总是先后发生，跟你是否监听毫无关联。通常我们使用 addEventListener 和 removeEventListener 来对事件进行监听、删除。
+
+```js
+xxx.addEventListener(type, listener, useCapture = false)
+xxx.addEventListener(type, listener, options)
+
+xxx.removeEventListener(type, listener[, options]);
+xxx.removeEventListener(type, listener[, useCapture]);
+/**
+  listener: 回调函数  或者实现了EventListener接口的对象
+  options: {
+      once：只执行一次
+      passive：承诺此事件监听不会调用 preventDefault，这有助于性能。
+      useCapture：是否捕获（否则冒泡）
+  }
+**/
+
+// 0级注册/注销的方法
+xxx.onClick = function(){};
+xxx.onClick = null;
+```
+
+在这里，第一个参数为监听的类型，第二个参数为触发监听所要执行的方法。这里需要注意的是：
+
+- 注册监听的时候，多次注册不同的 listener，在触发时也会按顺序执行多个 listener。
+- 注销监听所对应的方法需要与注册时的方法为相同的引用，两个不同内存空间下的方法即使两者写法相同但仍会被认为不是同一个被注销的监听方法。
+- 注册监听的时候，useCapture = true 和 useCapture = false 两者的触发并不冲突，两者的执行有着先后顺序，并不会因为注册了捕获的监听而无法执行冒泡的监听（在应执行方法内部不进行阻断的情况下）。
+- 并不是所有的事件都会触发捕获->冒泡。例如 onMouseEnter 事件在鼠标移动到元素内后就触发，不会冒泡，经过了子元素也不会再次触发。
+
+## 事件委托
+
+> 当在一个列表 ul 中点击某个 li 触发事件时，若是对所有的 li 都绑定点击事件，对性能和代码书写上是不理想的，把点击事件的监听绑定在父元素，比如 ul 上，并通过 e.target 去判断点击的是需要触发的哪一个元素，将子元素们需要做的事代理给父元素，这样的一种方式，叫事件委托。
+
+优点：
+
+- 不用等待请求渲染出队列后再去绑定事件
+- 减少事件的绑定，可以减少 dom 引用，减少页面内存消耗
+
+## 事件对象
+
+> 在进行事件监听的过程中，会在函数响应时传入一个变量\$event, 这里列下常用的属性及区别。
+
+1. event.target 指向引起触发事件的元素.
+2. event.currentTarget 指向事件绑定的元素.(当触发的对象和监听的对象是同一个时 target === currentTarger)
+3. event.stopPropagation() 阻止冒泡、捕获的事件传播。
+4. event.stopImmediatePropagation() 阻止冒泡、捕获的事件传播，同时阻止在相同事件上注册了多个 listener 的其他方法的执行。
+5. window.event.cancelBubble = true 用于配合 stopPropagation 来兼容 IE8 以下版本，IE8 以下只有冒泡事件，这里阻止冒泡事件的传播。
+6. event.preventDefault() 阻止默认行为
+
+额外的： css 阻止事件执行：pointer-events:none / touch-action: none
+
+## 自定义事件
+
+```js
+// 1.生成事件
+var event = new Event('build'); // 如果想要传参的话，new CustomEvent('build', { 'detail': elem.dataset.time });
+
+// 2.监听事件
+elem.addEventListener('build', function (e) { ... }, false);
+
+// 3.触发事件
+elem.dispatchEvent(event);
+```
+
+## 常见事件兼容写法
+
+```js
+const _Event = {
+  addEventListener: function(
+    element,
+    type,
+    event,
+    options = { useCapture: false }
+  ) {
+    if (element.addEventListener) {
+      element.addEventListener(type, event, options);
+    } else if (element.attachEvent) {
+      element.attachEvent("on" + type, event);
+    } else {
+      element["on" + type] = event;
+    }
+  },
+  removeEventListener: function(
+    element,
+    type,
+    event,
+    options = { useCapture: false }
+  ) {
+    if (element.removeEventListener) {
+      element.removeEventListener(type, event, options);
+    } else if (element.attachEvent) {
+      element.detachEvent("on" + type, event);
+    } else {
+      element["on" + type] = event;
+    }
+  },
+  getEvent: function(event) {
+    return event ? event : window.event;
+  },
+  getTarget: function(event) {
+    return event.target || event.srcElement;
+  },
+  preventDefault: function(event) {
+    if (event.preventDefault) {
+      event.preventDefault();
+    } else {
+      event.returnValue = false;
+    }
+  },
+  stopPropagation: function(event) {
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    } else {
+      event.cancelBubble = true;
+    }
+  },
+};
+```

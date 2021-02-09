@@ -1,4 +1,4 @@
-import { copy, integrateGitalk, baiduTongJi } from './utils';
+import { copy } from './utils';
 
 export default ({
     Vue, // VuePress 正在使用的 Vue 构造函数
