@@ -98,6 +98,12 @@ module.exports = {
           ],
         },
         {
+          title: "React",
+          children: [
+            "/study/react/react-router.md",
+          ],
+        },
+        {
           title: "Nodejs",
           children: ["/study/node/node.md"],
         },

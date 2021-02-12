@@ -484,17 +484,34 @@ console.log(w.prototypeProp); // 定义在构造函数原型对象上的属性�
 - 使用 Object.keys()和 Object.getOwnPropertyNames()只能获取实例对象自身的属性
 - 可以通过.hasOwnProperty()方法传入属性名来判断一个属性是不是实例自身的属性
 
-## 16. Promise 规范浅忆
-
-### 状态
-
-promise 有三个状态：分别是
-
-- pending:可以切换到 fulfilled 或 rejected
-- fulfilled：不可迁移状态，必须有个不可变的 value
-- rejected：不可迁移状态，必须有个不可变的 reason
-
-### 实现一个 promise
+## 16. ES5/ES6 的继承除了写法以外还有什么区别
+1. ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加 到 this 上（Parent.apply(this)）. 
+2. ES6 的继承机制完全不同，实质上是先创建父类的实例对象 this（所以必 须先调用父类的 super()方法），然后再用子类的构造函数修改 this。 
+3. ES5 的继承时通过原型或构造函数机制来实现。 
+4. ES6 通过 class 关键字定义类，里面有构造方法，类之间通过 extends 关 键字实现继承。 
+5. 子类必须在 constructor 方法中调用 super 方法，否则新建实例报错。因 为子类没有自己的 this 对象，而是继承了父类的 this 对象，然后对其进行加工。 如果不调用 super 方法，子类得不到 this 对象。 
+6. 注意 super 关键字指代父类的实例，即父类的 this 对象。 
+7. 注意：在子类构造函数中，调用 super 后，才可使用 this 关键字，否则 报错
+8. class 声明内部会启用严格模式，class 的所有方法（包括静态方法和实例方法）都是不可枚举的。创建实例时必须使用 new 调用 class
+9. class 的所有方法（包括静态方法和实例方法）都没有原型对象 prototype，所 以也没有[[construct]]，不能使用 new 来调用。
+```js
+function Bar() { this.bar = 42; }
+Bar.prototype.print = function() {
+  console.log(this.bar); 
+};
+const bar = new Bar();
+const barPrint = new bar.print(); // it's ok
+class Foo { 
+  constructor() { 
+    this.foo = 42; 
+  } 
+  print() { 
+    console.log(this.foo);
+  }
+}
+const foo = new Foo();
+const fooPrint = new foo.print(); // TypeError: foo.print is not a constructor
+```
 
 ## 17. 深浅拷贝
 
