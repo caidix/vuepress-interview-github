@@ -93,8 +93,9 @@ module.exports = {
           children: [
             "/study/vue/vue.md",
             "/study/vue/vue3.0.md",
-            "/study/vue/vueQuestion.md",
-            "/study/vue/vueMounted.md",
+            "/study/vue/vue-question.md",
+            "/study/vue/vue-mounted.md",
+            "/study/vue/mini-vue.md",
           ],
         },
         {

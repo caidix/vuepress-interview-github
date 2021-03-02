@@ -377,6 +377,8 @@ B页面
 <img src="https://upload-images.jianshu.io/upload_images/3174701-8e74b69ad9376710?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp"/>
 
 [深入理解缓存机制](https://www.jianshu.com/p/54cc04190252)
+[深入理解缓存机制2](https://juejin.cn/post/6844903593275817998)
+
 通常浏览器缓存策略分为两种：强缓存和协商缓存，并且缓存策略都是通过设置 HTTP Header 来实现的。
 
 ### 强缓存
@@ -406,14 +408,47 @@ Cache-Control 可以在请求头或者响应头中设置，并且可以组合使
 
 - min-fresh：能够容忍的最小新鲜度。min-fresh 标示了客户端不愿意接受
 
+> 在浏览器请求一个页面的数据之后，再次进入浏览器时，打开 network 面板中灰色的部分，采用的是强缓存，我们可以看到他的 size 有两种类型：memory cache 和 disk cache
+
+- memory cache: 内存缓存，特点是高效性和时效性：当浏览器将文件内容编译解析之后存直接存到浏览器的内存中，需要的时候直接进行读取，十分高效。当这个页面的进程被关闭之后，内存缓存也将被清除，这是时效性。
+- disk cache: 硬盘缓存，则是将浏览器读取的文件存入硬盘缓存中，每一次需要读取该文件的时候都需要从缓存中读取并重新编译这个文件，读取复杂且速度相对内存缓存来说慢。
+
+在浏览器中，浏览器会在 js 和图片等文件解析之后直接存到内存缓存中，那么当页面刷新的时候只需要从内存缓存中读取，而 css 文件则会放入到硬盘文件中，所以每次刷新都要从硬盘读取缓存。
+
 ### 协商缓存
 
-> 协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程，主要有以下两种情况：1.协商缓存生效，返回 304 和 Not Modified;2.协商缓存失效，返回 200 和请求结果
-> 协商缓存可以通过设置两种 HTTP Header 实现：Last-Modified 和 ETag 。
+> 协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，由服务器根据缓存标识决定是否使用缓存的过程，主要有以下两种情况：
+
+1. 协商缓存生效，返回 304 和 Not Modified 资源无更新，从缓存中取过去缓存的资源;
+2. 协商缓存失效，返回 200 和请求结果，重新将返回的结果和缓存标识存入浏览器缓存中;
+
+于此同时，协商缓存的标识也是在响应报文的 HTTP 头中和请求结果一起返回给浏览器的。协商缓存可以通过设置两种 HTTP Header 实现：Last-Modified 和 ETag 。
 
 ### 缓存机制
 
-强制缓存优先于协商缓存进行，若强制缓存(Expires 和 Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存(Last-Modified / If-Modified-Since 和 Etag / If-None-Match)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，返回 200，重新返回资源和缓存标识，再存入浏览器缓存中；生效则返回 304，继续使用缓存。
+强制缓存优先于协商缓存进行，若强制缓存(Expires 和 Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存(Last-Modified / If-Modified-Since 和 Etag / If-None-Match)其中 Etag / If-None-Match 的优先级比 Last-Modified / If-Modified-Since 高。协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，返回 200，重新返回资源和缓存标识，再存入浏览器缓存中；生效则返回 304，继续使用缓存。
+
+#### Last-Modified / If-Modified-Since
+
+> Last-Modified 是服务器响应请求时，返回该资源文件在服务器最后被修改的时间。
+
+<img src="/assets/network/last-modified.jpg"/>
+
+> If-Modified-Since 则是客户端再次发起该请求时，携带上次请求返回的 Last-Modified 值，通过此字段值告诉服务器该资源上次请求返回的最后被修改时间。服务器收到该请求，发现请求头含有 If-Modified-Since 字段，则会根据 If-Modified-Since 的字段值与该资源在服务器的最后被修改时间做对比，若服务器的资源最后被修改时间大于 If-Modified-Since 的字段值，则重新返回资源，状态码为 200；否则则返回 304，代表资源无更新，可继续使用缓存文件，如下。
+
+<img src="/assets/network/if-modified-since.jpg"/>
+
+#### Etag / If-None-Match
+
+> Etag 是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，如下。
+
+<img src="/assets/network/e-tag.jpg"/>
+
+> If-None-Match 是客户端再次发起该请求时，携带上次请求返回的唯一标识 Etag 值，通过此字段值告诉服务器该资源上次请求返回的唯一标识值。服务器收到该请求后，发现该请求头中含有 If-None-Match，则会根据 If-None-Match 的字段值与该资源在服务器的 Etag 值做对比，一致则返回 304，代表资源无更新，继续使用缓存文件；不一致则重新返回资源文件，状态码为 200，如下。
+
+<img src="/assets/network/if-none-match.jpg"/>
+
+注：Etag / If-None-Match 优先级高于 Last-Modified / If-Modified-Since，同时存在则只有 Etag / If-None-Match 生效。
 
 ## 11. 说一说浏览器的本地存储
 
