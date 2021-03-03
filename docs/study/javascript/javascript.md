@@ -19,7 +19,7 @@ categories:
 1. 标记清除
    这是 javascript 中最常用的垃圾回收方式，它将‘不再使用的对象’定义为‘无法达到的对象’。当变量进入执行环境是，就标记这个变量为“进入环境”。从逻辑上讲，永远不能释放进入环境的变量所占用的内存，因为只要执行流进入相应的环境，就可能会用到他们。当变量离开环境时，则将其标记为“离开环境”。
    垃圾收集器会从根部（全局对象）出发定时扫描内存中的对象，在运行的时候会给存储在内存中的所有变量都加上标记。然后，它会去掉环境中的变量以及被环境中的变量引用的标记。而在此之后再被加上标记的变量将被视为准备删除的变量，原因是环境中的变量已经无法访问到这些变量了。最后。垃圾收集器完成内存清除工作，销毁那些带标记的值，并回收他们所占用的内存空间。
-   如a=null其实只是做了一个释放引用的操纵，让a原本对应的值失去引用，脱离执行的环境，这个值会被下一次垃圾收集器执行操作时被找到并释放。而在适当的时候解除引用，是为页面获得更好的性能的一个重要的方式。
+   如 a=null 其实只是做了一个释放引用的操纵，让 a 原本对应的值失去引用，脱离执行的环境，这个值会被下一次垃圾收集器执行操作时被找到并释放。而在适当的时候解除引用，是为页面获得更好的性能的一个重要的方式。
 2. 引用计数
    所谓"引用计数"是指语言引擎有一张"引用表"，保存了内存里面所有的资源（通常是各种值）的引用次数。如果一个值的引用次数是 0，就表示这个值不再用到了，因此可以将这块内存释放。如果一个值不再需要了，引用数却不为 0，垃圾回收机制无法释放这块内存，从而导致内存泄漏。
 
@@ -485,27 +485,31 @@ console.log(w.prototypeProp); // 定义在构造函数原型对象上的属性�
 - 可以通过.hasOwnProperty()方法传入属性名来判断一个属性是不是实例自身的属性
 
 ## 16. ES5/ES6 的继承除了写法以外还有什么区别
-1. ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加 到 this 上（Parent.apply(this)）. 
-2. ES6 的继承机制完全不同，实质上是先创建父类的实例对象 this（所以必 须先调用父类的 super()方法），然后再用子类的构造函数修改 this。 
-3. ES5 的继承时通过原型或构造函数机制来实现。 
-4. ES6 通过 class 关键字定义类，里面有构造方法，类之间通过 extends 关 键字实现继承。 
-5. 子类必须在 constructor 方法中调用 super 方法，否则新建实例报错。因 为子类没有自己的 this 对象，而是继承了父类的 this 对象，然后对其进行加工。 如果不调用 super 方法，子类得不到 this 对象。 
-6. 注意 super 关键字指代父类的实例，即父类的 this 对象。 
+
+1. ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加 到 this 上（Parent.apply(this)）.
+2. ES6 的继承机制完全不同，实质上是先创建父类的实例对象 this（所以必 须先调用父类的 super()方法），然后再用子类的构造函数修改 this。
+3. ES5 的继承时通过原型或构造函数机制来实现。
+4. ES6 通过 class 关键字定义类，里面有构造方法，类之间通过 extends 关 键字实现继承。
+5. 子类必须在 constructor 方法中调用 super 方法，否则新建实例报错。因 为子类没有自己的 this 对象，而是继承了父类的 this 对象，然后对其进行加工。 如果不调用 super 方法，子类得不到 this 对象。
+6. 注意 super 关键字指代父类的实例，即父类的 this 对象。
 7. 注意：在子类构造函数中，调用 super 后，才可使用 this 关键字，否则 报错
 8. class 声明内部会启用严格模式，class 的所有方法（包括静态方法和实例方法）都是不可枚举的。创建实例时必须使用 new 调用 class
 9. class 的所有方法（包括静态方法和实例方法）都没有原型对象 prototype，所 以也没有[[construct]]，不能使用 new 来调用。
+
 ```js
-function Bar() { this.bar = 42; }
+function Bar() {
+  this.bar = 42;
+}
 Bar.prototype.print = function() {
-  console.log(this.bar); 
+  console.log(this.bar);
 };
 const bar = new Bar();
 const barPrint = new bar.print(); // it's ok
-class Foo { 
-  constructor() { 
-    this.foo = 42; 
-  } 
-  print() { 
+class Foo {
+  constructor() {
+    this.foo = 42;
+  }
+  print() {
     console.log(this.foo);
   }
 }
@@ -585,6 +589,71 @@ function deepClone(obj) {
 }
 ```
 
+3. 更加详细的深拷贝
+
+```js
+const simpleType = ["boolean", "string", "number"];
+const deepType = ["object", "array", "map", "set", "arguments"];
+
+function getType(target) {
+  return Object.prototype.toString
+    .call(target)
+    .slice(8, -1)
+    .toLowerCase();
+}
+
+function forEach(target, fn) {
+  let index = -1;
+  while (++index < target.length) {
+    fn(target[index], index);
+  }
+  return target;
+}
+
+function deepClone(target, map = new WeakMap()) {
+  const type = getType(target);
+  let cloneTarget;
+  if (simpleType.includes(type)) {
+    return target;
+  } else if (deepType.includes(type)) {
+    const Cont = target.constructor;
+    cloneTargert = new Cont();
+  } else {
+    return;
+  }
+
+  // 防止它深拷贝的时候引用了自身
+  if (map.get(target)) {
+    return map.get(target);
+  }
+  map.set(target);
+
+  if (type === "set") {
+    target.forEach((value) => {
+      cloneTarget.add(deepClone(value, map));
+    });
+    return cloneTarget;
+  }
+
+  if (type === "map") {
+    target.forEach((value, key) => {
+      cloneTarget.set(key, deepClone(value, map));
+    });
+    return cloneTarget;
+  }
+
+  const keys = type === "array" ? undefined : Object.keys(target);
+  forEach(keys || target, (value, index) => {
+    if (keys) {
+      index = value;
+    }
+    cloneTarget[index] = deepClone(target[index], map);
+  });
+
+  return cloneTarget;
+}
+```
+
 ## 18. 防抖 and 节流
 
 ### 防抖
@@ -658,6 +727,77 @@ function throttle(func, wait, type) {
       }
     }
   };
+}
+```
+
+### 防抖节流 -- throttle-debounce 库
+
+- noTrailing: 可选，默认为 false。如果 noTrailing 为 true，则回调将仅每隔“delay”毫秒执行一次，而
+  正在调用限制函数。如果 noTrailing 为 false 或未指定，则将最后执行一次回调
+  在上次限制的函数调用之后。（在“delay”毫秒内未调用限制函数之后，
+  内部计数器复位）。
+- debounceMode:如果“debounceMode”为 true（在开始处），则计划“clear”在“delay”ms 之后执行。如果“debounceMode”为 false（在结束处），将“callback”安排在“delay”ms 之后执行。
+
+```js
+function throttle(delay, noTrailing, callback, debounceMode) {
+  let timeoutID,
+    cancelled = false,
+    lastExec = 0;
+
+  function clearExistingTimeout() {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+  }
+
+  function cancel() {
+    clearExistingTimeout();
+    cancelled = true;
+  }
+
+  if (typeof noTariling === "boolean") {
+    debounceMode = callback;
+    callback = noTrailing;
+    noTrailing = undefined;
+  }
+
+  function warpper(..._arguments) {
+    if (cancelled) return;
+    let self = this;
+    let elapsed = Date.now() - lastExec;
+
+    function exec() {
+      lastExec = Date.now();
+      fn.apply(self, _arguments);
+    }
+
+    function clear() {
+      timeoutID = null;
+    }
+
+    if (debounceMode && !timeoutID) {
+      exec();
+    }
+
+    clearExistingTimeout();
+
+    if (debounceMode === undefined && elapsed > delay) {
+      exec();
+    } else if (noTrailing !== true) {
+      timeoutID = setTimeout(
+        debounceMode ? clear : exec,
+        debounceMode === undefined ? delay - elapsed : delay
+      );
+    }
+    wrapper.cancel = cancel;
+    return wrapper;
+  }
+
+  function debounce(delay, atBegin, callback) {
+    return callback === undefined
+      ? throttle(delay, atBegin, false)
+      : throttle(delay, callback, atBegin !== false);
+  }
 }
 ```
 

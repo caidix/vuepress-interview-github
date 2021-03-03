@@ -66,7 +66,7 @@ module.exports = {
       "/study/": [
         {
           title: "网络",
-          children: ["/study/network/network.md"],
+          children: ["/study/network/network.md", "/study/network/safe.md"],
         },
         {
           title: "HTML相关",
