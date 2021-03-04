@@ -13,6 +13,7 @@ sticky: 1
 ::: tip promise A+规范
 PromiseA+规范从零实现，包括最新的 allSettled 方法
 :::
+
 <!-- more -->
 
 ## promise A+规范的要求
@@ -443,23 +444,22 @@ static reject(reason) {
 
 ### all 方法
 
+> promise.all 传入一个数组，这个数组内可能时一个常量，也可能是一个 promsie 对象， 我们需要将其包裹到 promsie.resolve 中将他们都转换成一个 promise 对象进行处理
+
 ```js
 static all(list) {
   return new PromiseClone((resolve, reject) => {
-    const count = 0
-    const results = []
-    for (const [i, promiseHandler] of list) {
-      if (!(promiseHandler instanceof PromiseClone)) break;
-      promiseHandler.then(
-        (value) => {
-          results[i] = value
-          count++
-          if (count === list.length) resolve(results)
-        },
-        (err) => {
-          reject(err)
-        }
-      )
+    if (!Array.isArray(list)) reject(new Error('arguments must be array type'))
+    const result = [], len = list.length;
+    let count = 0;
+    for(let i = 0; i < len; i++) {
+      PromiseClone.resolve(list[i]).then(res => {
+        result[i] = res;
+        count++;
+        if (count === len)resolve(results)
+      }, err=> {
+        reject(err)
+      })
     }
   })
 }
