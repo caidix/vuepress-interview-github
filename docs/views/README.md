@@ -4,6 +4,11 @@ date: 2020-12-20
 sidebar: auto
 ---
 
+## 性能相关方案
+
+- [响应加密的方案](https://www.zoo.team/article/data-encryption)
+- [前端监控方案](https://github.com/wangweianger/zanePerfor)
+
 ## GITHUB
 
 - [基于 ts 从零实现 axios，理解其原理及封装](https://github.com/Suremotoo/ts-axios-doc)
