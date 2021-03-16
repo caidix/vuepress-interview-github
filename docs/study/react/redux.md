@@ -1,4 +1,21 @@
+---
+title: redux 源码及简单实现
+date: 2021-02-22
+tags:
+  - JavaScript
+categories:
+  - JavaScript
+  - React
+---
+
+- [git 官网](https://github.com/reduxjs)
+- [中文文档](https://cn.redux.js.org/)
+
+## redux 的 createStore
+
 ```js
+// 路径：https://github.com/reduxjs/redux/blob/master/src/createStore.ts
+// 现在已经是ts的版本，看起来会比较麻烦，我在这里转为js版本并挑重点写入
 export function createStore(reducer, preloadedState, enhancer) {
   // 如果你除了reducer以外的参数都传递了函数，建议使用compose来整合他们进行使用,compose后面会写
   if (
@@ -31,7 +48,7 @@ export function createStore(reducer, preloadedState, enhancer) {
   }
 
   let currentReducer = reducer;
-  let currentState = preloadedState; // preloadedS tate: 初始化 State
+  let currentState = preloadedState; // preloadedState: 初始化 State
   let currentListeners = [];
   let isDispatching = false;
 
@@ -87,3 +104,157 @@ export function createStore(reducer, preloadedState, enhancer) {
   };
 }
 ```
+
+> store.subscribe()方法总结：
+
+- 入参函数放入监听队列
+
+- 返回消订阅函数
+
+> store.dispatch()方法总结：
+
+- 调用 Reducer，传参（currentState，action）。
+
+- 按顺序执行 listener。
+
+- 返回 action。
+
+## redux 的 [bindActionCreators](https://cn.redux.js.org/docs/api/bindActionCreators.html)
+
+> bindActionCreators 把 action creators 转成拥有同名 keys 的对象，使用 dispatch 把每个 action creator 包装起来，这样可以直接调用它们。
+
+```js
+// https://github.com/reduxjs/redux/blob/bc53cd00a4/src/bindActionCreators.ts
+
+function bindActionCreator(actionCreator, dispatch) {
+  return (...args) => dispatch(actionCreator(...args))
+}
+
+export default bindActionCreators(actionCreators, dispatch) {
+  // ... if ... if
+  const keys = Object.keys(actionCreators)
+  const boundActionCreators = {}
+  for(let i = 0; i< keys.length; i++) {
+    const key = keys[i]
+    const actionCreator = actionCreators[i]
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch)
+    }
+  }
+  return boundActionCreators
+}
+```
+
+## redux 的[combineReducers](https://github.com/reduxjs/redux/blob/bc53cd00a4/src/combineReducers.ts)
+
+简易版关键代码：
+
+```js
+// https://github.com/reduxjs/redux/blob/bc53cd00a4/src/combineReducers.ts
+export function combineReducers(obj) {
+  return function(state = {}, action) {
+    Object.keys(obj).forEach((key) => {
+      state[key] = obj[key](state[key], action);
+    });
+    return state;
+  };
+}
+```
+
+> 这个方法的主要功能是用来合并 Reducer，因为当我们应用比较大的时候 Reducer 按照模块拆分看上去会比较清晰，但是传入 Store 的 Reducer 必须是一个函数，所以用这个方法来作合并。
+
+## redux 的[compose](https://github.com/reduxjs/redux/blob/bc53cd00a4/src/compose.ts)
+
+```js
+export default function compose(...funcs) {
+  if (funcs.length === 0) {
+    // infer the argument type so it is usable in inference down the line
+    return (args) => args;
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  // funcs = [a, b, c]   => a(b(c(...args)))
+  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+}
+```
+
+> compose 这个方法，主要用来组合传入的一系列函数，在中间件时会用到。可以看到，执行的最终结果是把各个函数串联起来。
+
+compose(a, b, c)等价于 return (...args)=>a(b(c(...args)))
+
+## redux 的 applyMiddleware
+
+applyMiddleware 用于 Store 增强
+
+<img src="https://awps-assets.meituan.net/mit-x/blog-images-bundle-2017/52f8f013.png"/>
+
+可以看到执行方法有三层，那么对应我们源码看的话最终会执行最后一层。最后一层的执行结果是返回了一个正常的 Store 和一个被变更过的 dispatch 方法，实现了对 Store 的增强。
+
+这里假设我们传入的数组 chain 是［f,g,h］，那么我们的 dispatch 相当于把原有 dispatch 方法进行 f,g,h 层层过滤，变成了新的 dispatch。
+
+由此的话我们可以推出中间件的写法：因为中间件是要多个首尾相连的，需要一层层的“加工”，所以要有个 next 方法来独立一层确保串联执行，另外 dispatch 增强后也是个 dispatch 方法，也要接收 action 参数，所以最后一层肯定是 action。
+
+再者，中间件内部需要用到 Store 的方法，所以 Store 我们放到顶层，最后的结果就是：
+
+<img src="https://awps-assets.meituan.net/mit-x/blog-images-bundle-2017/85032d6f.png"/>
+
+## connect 嵌套方法
+
+```js
+import React, { Component } from "react";
+const MyContext = React.createContext();
+export class Provider extends Component {
+  render() {
+    let { store, children } = this.props;
+    return <MyContext.Provider value={store}>{children}</MyContext.Provider>;
+  }
+}
+
+export function connect(mapStateToProps, mapDispatchToProps) {
+  return function(Comp) {
+    return class Temp extends Component {
+      constructor(props, context) {
+        super(props, context);
+        this.state = mapStateToProps(context.getState());
+        this.dispatch = mapDispatchToProps(context.dispatch);
+      }
+      static contextType = MyContext;
+      componentDidMount() {
+        this.context.subscribe(() => {
+          this.setState(mapStateToProps(this.context.getState()));
+        });
+      }
+      render() {
+        return <Comp {...this.props} {...this.state} {...this.dispatch} />;
+      }
+    };
+  };
+}
+```
+
+## 总结
+
+用对象展开符增加代码可读性。
+
+区分 smart component（know the State）和 dump component（完全不需要关心 State）。
+
+component 里不要出现任何 async calls，交给 action creator 来做。
+
+Reducer 尽量简单，复杂的交给 action creator。
+
+Reducer 里 return state 的时候，不要改动之前 State，请返回新的。
+
+immutable.js 配合效果很好（但同时也会带来强侵入性，可以结合实际项目考虑）。
+
+action creator 里，用 promise/async/await 以及 Redux-thunk（redux-saga）来帮助你完成想要的功能。
+
+action creators 和 Reducer 请用 pure 函数。
+
+请慎重选择组件树的哪一层使用 connected component(连接到 Store)，通常是比较高层的组件用来和 Store 沟通，最低层组件使用这防止太长的 prop chain。
+
+请慎用自定义的 Redux-middleware，错误的配置可能会影响到其他 middleware.
+
+有些时候有些项目你并不需要 Redux（毕竟引入 Redux 会增加一些额外的工作量）

@@ -102,6 +102,7 @@ module.exports = {
           title: "React",
           children: [
             "/study/react/react-router.md",
+            "/study/react/redux.md",
           ],
         },
         {
