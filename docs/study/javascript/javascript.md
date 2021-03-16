@@ -1130,3 +1130,81 @@ function concurrentRequest(ajaxs = [], maxNums) {
   });
 }
 ```
+
+## 29. 用 JS 实现异步并行
+
+> 用 JS 实现异步并行,使得下面的方法可以按顺序执行
+
+```js
+createFlow([
+  () => console.log("a"),
+  () => console.log("b"),
+  createFlow([() => console.log("c")]),
+  [() => delay().then(() => console.log("d")), () => console.log("e")],
+]).run(() => {
+  console.log("wwww");
+});
+```
+
+> 代码
+
+```js
+const delay = () => new Promise((resolve) => setTimeout(resolve, 1000));
+function createFlow(patten) {
+  if (!Array.isArray(patten)) return;
+  const newPatten = flat(patten);
+  function run(callback) {
+    while (newPatten.length) {
+      const task = newPatten.shift();
+      if (typeof task === "function") {
+        const res = task();
+        if (res && res.then && typeof res.then === "function") {
+          res.then(() => createFlow(newPatten).run(callback));
+          return;
+        }
+      }
+      if (typeof task === "object" && task.isFlow) {
+        task.run && task.run(createFlow(newPatten).run(callback));
+        return;
+      }
+    }
+    callback && callback();
+  }
+
+  return {
+    run,
+    isFlow: true,
+  };
+}
+```
+
+> 原理类似于 koa 中间件原理，这里列出中间件延续代码
+
+```js
+function compose(middleware) {
+  if (!Array.isArray(middleware))
+    throw new TypeError("middleware must be array");
+  for (const fn of middleware) {
+    if (typeof fn !== "function") {
+      throw new TypeError("middleware must be composed of functions");
+    }
+  }
+  return function(context, next) {
+    let index = -1;
+    return dispatch(0);
+    function dispatch(i) {
+      if (i <= index)
+        return Promise.reject(new Error("next() called multiple times"));
+      index = i;
+      const fn = middleware[i];
+      if (i === middleware.length) fn = next;
+      if (!fn) return Promise.resolve();
+      try {
+        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
+  };
+}
+```
