@@ -85,6 +85,8 @@ module.exports = {
             "/study/javascript/event-dom.md",
             "/study/javascript/design-pattern.md",
             "/study/javascript/methods.md",
+            "/study/javascript/extends.md",
+            "/study/javascript/optimization.md",
             // "/study/javascript/typescript.md",
           ],
         },
