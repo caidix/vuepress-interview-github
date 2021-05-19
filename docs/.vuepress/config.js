@@ -109,7 +109,12 @@ module.exports = {
         },
         {
           title: "Nodejs",
-          children: ["/study/node/node.md"],
+          children: [
+            "/study/node/node.md",
+            "/study/node/node-buffer.md",
+            "/study/node/node-stream.md",
+            "/study/node/node-loop.md"
+          ],
         },
         {
           title: "webpack",
