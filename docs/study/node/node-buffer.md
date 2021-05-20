@@ -60,7 +60,7 @@ ArrayBuffer 本身只是一个 0 和 1 存放在一行里面的一个集合，Ar
 <img src="/assets/node/int8-array.png"/>
 
 3.2 例如，你可以使用一个无符号的 Int16 数组来分离存放 16 位二进制字节。
-<img src="/assets/node/unit16-array.png"/>
+<img src="/assets/node/uint16-array.png"/>
 
 我们了解了 buffer 是什么之后，来看看 node 的 buffer
 
