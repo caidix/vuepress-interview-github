@@ -222,4 +222,126 @@ export class Countdown extends EventEmitter {
 ```
 
 ## 观察者模式和订阅-发布模式的区别，各自适用于什么场景
+
 > 观察者模式中的主题是相互感知的，发布订阅模式中的主题是相互不感知的，是借助第三方来发布调度的。
+
+## 设计模式六大原则
+
+### OCP 原则
+
+> OCP Open Closed Principle (开闭原则)。软件实体应该对扩展开放，对修改关闭，其含义是说一个软件实体应该通过扩展来实现变化，而不是通过修改已有的代码来实现变化。
+
+如何遵循抽象约束：
+
+a) 通过接口或抽象类约束扩展，对扩展进行边界限定，不允许出现在接口或抽象类中的不存在的 public 方法；
+
+b) 参数类型、引用对象尽量使用接口或者抽象类，而不是实现类；
+
+c) 抽象层尽量保持稳定，一旦确定即不允许修改。
+
+封装变化：
+
+a) 将相同的变化封装到一个接口或抽象类中；
+
+b) 将不同的变化封装到不同的接口或抽象类中，不应该有两个不同的变化出现在同一接口或抽象类中。（23 设计模式也是从各个不同的角度对变化进行封装的）
+
+最佳实践：
+封装变化：按可能变化的不同去封装变化；
+抽象约束：抽象层尽量保持稳定，一旦确定即不允许修改。
+
+> 例如，我去买书，买海绵宝宝的会提示货物不足， 买派大星的会弹出支付，如果购买的这个物品是极品（JP），则会返回高亮的效果
+
+```js
+if (buy === "hmbb") {
+  alert("货物不足");
+} else {
+  // normal
+}
+if (buy === "pdx") {
+  payfor("10000");
+} else {
+  // normal
+}
+
+// 如果有极品
+if (buy === "hmbb") {
+  alert("货物不足");
+} else if (buy === "jp") {
+  // 高亮
+} else {
+  // normal
+}
+
+//OCP原则重构
+
+class Mall {
+  constructor(buy) {
+    this.buy = buy;
+  }
+  setHighLight() {
+    // 正常
+  }
+  openDialog() {
+    // 正常
+  }
+}
+class HMBB extends Mall {
+  openDialog() {
+    // 货物不足弹窗
+  }
+}
+class PDX extends Mall {
+  openDialog() {
+    // payfor弹窗
+  }
+}
+class JP extends Mall {
+  setHighLight() {
+    // 高亮
+  }
+}
+```
+
+### SRP 原则
+
+> SRP -单一职责原则
+
+- 目标： 一个模块只能做一件事, 通过解耦让模块更加独立
+
+```js
+// 需求： game store 设计开发结算模块
+class PUBGManager {
+  // 弹出结算框
+  openDialog() {
+    // 计算金额
+    setPrice();
+  }
+}
+
+const game = new PUBGManager();
+game.openDialog(); // 弹窗 < = > setPrice 耦合
+
+// 重构
+// 拆分计算金额和结算弹框
+// gameManager.js
+class PUBGManager {
+  constructor(command) {
+    this.command = command;
+  }
+  openDialog(price) {
+    // 计算金额
+    this.command.setPrice(price);
+  }
+}
+
+class PriceManager {
+  setPrice(price) {
+    // 计算金额
+  }
+}
+
+const exe = new PriceManager();
+const game = new PUBGManager(exe);
+game.openDialog(15);
+exe.setPrice(10);
+```

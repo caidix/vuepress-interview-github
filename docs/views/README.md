@@ -11,10 +11,14 @@ sidebar: auto
 
 ## GITHUB
 
+- [开发时常用的简短代码](https://github.com/30-seconds/30-seconds-of-code)
 - [基于 ts 从零实现 axios，理解其原理及封装](https://github.com/Suremotoo/ts-axios-doc)
 - [babel 由浅入深学习](https://github.com/jamiebuilds/babel-handbook)
 - [TypeScript 使用手册](https://github.com/zhongsp/TypeScript)
 - [evanYou 讲解 miniVue3](https://www.bilibili.com/video/av796189639/)
+- [如何写出更好可读性的 js 代码](https://github.com/ryanmcdermott/clean-code-javascript)
+- [javascript 的算法和数据结构](https://github.com/trekhleb/javascript-algorithms)
+- [nodejs 最佳实践](https://github.com/goldbergyoni/nodebestpractices)
 
 ## Knowledge
 
