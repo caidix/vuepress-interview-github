@@ -98,6 +98,7 @@ module.exports = {
             "/study/vue/vue-question.md",
             "/study/vue/vue-mounted.md",
             "/study/vue/mini-vue.md",
+            "/study/vue/vue-vuex.md",
           ],
         },
         {
