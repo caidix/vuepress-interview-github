@@ -1,0 +1,9 @@
+{
+  "name": "CD-Knowledge-Blog",
+  "short_name": "CD",
+  "description": "CD的知识空间",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#fff",
+  "theme_color": "#c93756"
+}
