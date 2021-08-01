@@ -119,7 +119,7 @@ module.exports = {
         },
         {
           title: "webpack",
-          children: ["/study/webpack.md"],
+          children: ["/study/webpack/webpack.md"],
         },
         {
           title: "Git",
