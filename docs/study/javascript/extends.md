@@ -1,14 +1,80 @@
 ---
-
-title: 继承
+title: 原型和继承
 date: 2021-02-20
 sidebar: auto
 tags:
- - JavaScript
+  - JavaScript
 categories:
- - JavaScript
-
+  - JavaScript
 ---
+
+## Js 中的对象
+
+### 对象包含了什么
+
+对象包含了属性和方法
+
+1. 创建实例的属性和方法
+
+```js
+function Music(singer) {
+  this.singer = singer;
+  this.start = function() {
+    console.log(singer + "歌手");
+  };
+}
+const singer1 = new Music("周杰伦");
+const singer2 = new Music("王力宏");
+singer1.singer === singer2.singer; // false
+```
+
+通过 this 添加的属性和方法总是指向当前创建的实例,每次创建实例时，通过 this 添加的属性和方法都会在内存中保存一份，这样对于内存来说会造成一定的浪费，但好处是每一份创建出来的实例下 this 添加的属性和方法都是独有的，不会被污染。
+
+2. 原型
+
+通过原型继承的⽅法并不是⾃身的，我们要在原型链上⼀层⼀层的查找，这样创建的好处是只
+在内存中创建⼀次，实例化的对象都会指向这个 prototype 对象。
+
+```js
+function Music(singer) {
+  this.singer = singer;
+}
+Music.prototype.start = function() {
+  console.log(singer + "歌手");
+};
+const singer1 = new Music("周杰伦");
+const singer2 = new Music("王力宏");
+singer1.start === singer2.start; // true
+```
+
+3. 静态属性
+
+静态属性是挂载在构造函数上的属性或方法，需要通过构造函数去调用，实例无法调用
+
+```js
+function Music(singer) {
+  this.singer = singer;
+  Music.sum++;
+}
+Music.sum = 0;
+const singer1 = new Music("周杰伦");
+console.log(Music.sum); // 1
+const singer2 = new Music("王力宏");
+console.log(Music.sum); // 2
+
+singer1.sum; // undefined
+```
+
+### 原型和原型链
+
+> 当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。
+
+1. 每一个 JavaScript 对象(除了 null )都具有的一个属性，叫**proto**，这个属性会指向该对象的原型。
+2. 每个函数都有一个 prototype 属性
+3. 每个原型都有一个 constructor 属性指向关联的构造函数。
+
+![prototype](/assets/js/prototype3.png)
+![prototype](/assets/js/prototype.png)
 
 ## 原型链继承
 
@@ -19,7 +85,7 @@ function Parent() {
   this.name = "parentName";
 }
 
-Parent.prototype.getName = function () {
+Parent.prototype.getName = function() {
   console.log(this.name);
 };
 
@@ -122,7 +188,7 @@ console.log(child2.name); // { actions: [ 'sing', 'jump', 'rap' ], name: 'c2', i
 function Parent(name, actions) {
   this.actions = actions;
   this.name = name;
-  this.eat = function () {
+  this.eat = function() {
     console.log(`${name} - eat`);
   };
 }
@@ -156,7 +222,7 @@ function Parent(name, actions) {
   this.actions = actions;
 }
 
-Parent.prototype.eat = function () {
+Parent.prototype.eat = function() {
   console.log(`${this.name} - eat`);
 };
 
@@ -198,7 +264,7 @@ function Parent(name, actions) {
   this.actions = actions;
 }
 
-Parent.prototype.eat = function () {
+Parent.prototype.eat = function() {
   console.log(`${this.name} - eat`);
 };
 
@@ -209,7 +275,7 @@ function Child(id) {
 
 // 模拟Object.create的效果
 // 如果直接使用Object.create的话，可以写成Child.prototype = Object.create(Parent.prototype);
-let TempFunction = function () {};
+let TempFunction = function() {};
 TempFunction.prototype = Parent.prototype;
 Child.prototype = new TempFunction();
 
@@ -231,7 +297,7 @@ function Parent(name, actions) {
   this.actions = actions;
 }
 
-Parent.prototype.eat = function () {
+Parent.prototype.eat = function() {
   console.log(`${this.name} - eat`);
 };
 
@@ -246,7 +312,7 @@ Child.prototype.constructor = Child;
 
 console.log(Parent.prototype); // Child { eat: [Function], childEat: [Function] }
 
-Child.prototype.childEat = function () {
+Child.prototype.childEat = function() {
   console.log(`childEat - ${this.name}`);
 };
 

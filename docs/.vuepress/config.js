@@ -87,7 +87,7 @@ module.exports = {
             "/study/javascript/methods.md",
             "/study/javascript/extends.md",
             "/study/javascript/optimization.md",
-            // "/study/javascript/typescript.md",
+            "/study/javascript/typescript.md",
           ],
         },
         {
@@ -119,7 +119,7 @@ module.exports = {
         },
         {
           title: "webpack",
-          children: ["/study/webpack/webpack.md"],
+          children: ["/study/webpack/webpack.md", "/study/webpack/plugin-loader.md"],
         },
         {
           title: "Git",

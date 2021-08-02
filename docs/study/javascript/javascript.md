@@ -931,7 +931,11 @@ function add() {
 }
 ```
 
-## 23. 手写 bind
+## 23. 手写 bind apply call
+
+1. bind 返回一个函数,且可以传递参数
+2. bind 一个绑定函数也能使用 new 操作符创建对象：这种行为就像把原函数当成构造器。提供的 this 值被忽略，同时调用时的参数被提供给模拟函数。也就是我们new它时，this指向会失效，但是传入的参数仍然生效。
+3. 当作为构造函数时，this 指向实例
 
 ```javascript
 Function.prototype.bind2 = function(context) {
@@ -952,6 +956,46 @@ Function.prototype.bind2 = function(context) {
   fNOP.prototype = this.prototype;
   fbound.prototype = new fNOP();
   return fbound;
+};
+```
+
+```js
+Function.prototype._bind = function() {
+  let func = this,
+    arg = arguments[0],
+    args = Array.prototype.slice.call(arguments, 1);
+  if (typeof arg !== "function") {
+    throw new TypeError(
+      "Function.prototype.bind - " +
+        "what is trying to be bound is not callable"
+    );
+  }
+  return function newFn() {
+    args = [...args, ...Array.prototype.slice.call(arguments)];
+    if (this instanceof newFn) {
+      return new func(...args, ...newFnArgs);
+    }
+    return func.apply(arg, args);
+  };
+};
+```
+
+apply, call 只是传参方式不同
+
+```js
+Function.prototype._apply = function(context, args) {
+  //这里默认不传就是给window,也可以用es6给参数设置默认参数
+  context = context || window;
+  args = args ? args : [];
+  //给context新增一个独一无二的属性以免覆盖原有属性
+  const key = Symbol();
+  context[key] = this;
+  //通过隐式绑定的方式调用函数
+  const result = context[key](...args);
+  //删除添加的属性
+  delete context[key];
+  //返回函数调用的返回值
+  return result;
 };
 ```
 
@@ -1206,5 +1250,25 @@ function compose(middleware) {
       }
     }
   };
+}
+```
+
+## 手写 new
+
+结合代码看 new 关键字都做了什么
+
+1. 一个继承自 Context.prototype 的新对象 newObj 被创建
+2. newObj.**proto** 指向 Context.prototype，即 newObj.**proto** = Context.prototype
+3. 将 this 指向新创建的对象 newObj
+4. 返回新对象
+   4.1 如果构造函数没有显式返回值，则返回 this
+   4.2 如果构造函数有显式返回值，是基本类型，比如 number,string,boolean, 那么还是返回 this
+   4.3 如果构造函数有显式返回值，是对象类型，比如{ a: 1 }, 则返回这个对象{ a: 1 }
+
+```js
+function handleNew(Context, ...args) {
+  const newObj = Object.create(Context.prototype);
+  const rest = Context.apply(newObj, args);
+  return typeof rest === "object" ? rest : newObj;
 }
 ```
