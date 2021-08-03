@@ -99,6 +99,7 @@ module.exports = {
             "/study/vue/vue-mounted.md",
             "/study/vue/mini-vue.md",
             "/study/vue/vue-vuex.md",
+            "/study/vue/vue-keepalive.md",
           ],
         },
         {
@@ -130,7 +131,7 @@ module.exports = {
           children: [
             "/study/algorithm/algorithm.md",
             "/study/algorithm/leetcode.md",
-            "/study/algorithm/func.md",
+            "/study/algorithm/leet-easy.md",
           ],
         },
       ],
