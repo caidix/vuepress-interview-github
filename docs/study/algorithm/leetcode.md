@@ -757,17 +757,18 @@ var calculate = function(s) {
   let ret = 0;
   const n = s.length;
   let i = 0;
+  // "- (3 + (4 + 5))"
   while (i < n) {
     if (s[i] === " ") {
       i++;
     } else if (s[i] === "+") {
-      sign = ops[ops.length - 1];
+      sign = ops[ops.length - 1]; -1
       i++;
     } else if (s[i] === "-") {
-      sign = -ops[ops.length - 1];
+      sign = -ops[ops.length - 1]; // -1
       i++;
     } else if (s[i] === "(") {
-      ops.push(sign);
+      ops.push(sign); // 1, -1, -1
       i++;
     } else if (s[i] === ")") {
       ops.pop();

@@ -691,3 +691,180 @@ var reverseList = function(head) {
   return pre;
 };
 ```
+
+## 删除有序数组中的重复项
+
+给你一个有序数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。
+
+不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+
+说明:
+
+为什么返回数值是整数，但输出的答案是数组呢?
+
+请注意，输入数组是以「引用」方式传递的，这意味着在函数里修改输入数组对于调用者是可见的。
+
+你可以想象内部操作如下:
+
+// nums 是以“引用”方式传递的。也就是说，不对实参做任何拷贝
+int len = removeDuplicates(nums);
+
+// 在函数里修改输入数组对于调用者是可见的。
+// 根据你的函数返回的长度, 它会打印出数组中 该长度范围内 的所有元素。
+for (int i = 0; i < len; i++) {
+    print(nums[i]);
+}
+
+示例 1：
+
+输入：nums = [1,1,2]
+输出：2, nums = [1,2]
+解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修改为 1, 2 。不需要考虑数组中超出新长度后面的元素。
+示例 2：
+
+输入：nums = [0,0,1,1,1,2,2,3,3,4]
+输出：5, nums = [0,1,2,3,4]
+解释：函数应该返回新的长度 5 ， 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4 。不需要考虑数组中超出新长度后面的元素。
+
+提示：
+
+0 <= nums.length <= 3 \* 104
+-104 <= nums[i] <= 104
+nums 已按升序排列
+
+> 双指针 之 快慢指针
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var removeDuplicates = function(nums) {
+  let sum = 0,
+    l = 0;
+  for (let r = 1; r < nums.length; r++) {
+    if (nums[l] !== nums[r]) {
+      nums[l + 1] = nums[r];
+      l++;
+    }
+  }
+  return l + 1;
+};
+```
+
+## 合并两个有序数组
+
+给你两个有序整数数组 nums1 和 nums2，请你将 nums2 合并到 nums1 中，使 nums1 成为一个有序数组。
+
+初始化 nums1 和 nums2 的元素数量分别为 m 和 n 。你可以假设 nums1 的空间大小等于 m + n，这样它就有足够的空间保存来自 nums2 的元素。
+
+示例 1：
+
+输入：nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+输出：[1,2,2,3,5,6]
+示例 2：
+
+输入：nums1 = [1], m = 1, nums2 = [], n = 0
+输出：[1]
+
+提示：
+
+nums1.length == m + n
+nums2.length == n
+0 <= m, n <= 200
+1 <= m + n <= 200
+-109 <= nums1[i], nums2[i] <= 109
+
+> 因为是有序数组，第一个数组还有正好满足假如第二数组的空间，所以这里可以采取双指针来解答，从后往前遍历
+
+```js
+// 直接排序push到新数组的方法
+var merge = function(nums1, m, nums2, n) {
+  const newArr = [];
+  let s1 = (s2 = 0);
+  while (s1 < m || s2 < n) {
+    if (s1 >= m) {
+      newArr.push(nums2[s2++]);
+    } else if (s2 >= n) {
+      newArr.push(nums1[s1++]);
+    } else if (nums1[s1] > nums2[s2]) {
+      newArr.push(nums2[s2++]);
+    } else {
+      newArr.push(nums1[s1++]);
+    }
+  }
+  console.log(newArr);
+  return newArr;
+};
+
+// 快慢指针从后面进入，我们知道第一个数组已经留好了空位
+var merge = function(nums1, m, nums2, n) {
+  let total = m + n - 1;
+  m--;
+  n--;
+  while (m >= 0 || n >= 0) {
+    if (m === -1) {
+      nums1[total] = nums2[n--];
+    } else if (n === -1) {
+      nums1[total] = nums1[m--];
+    } else if (nums1[m] > nums2[n]) {
+      nums1[total] = nums1[m--];
+    } else {
+      nums1[total] = nums2[n--];
+    }
+    total--;
+  }
+  return nums1;
+};
+// 优化下判断
+var merge = function(nums1, m, nums2, n) {
+  let total = m + n - 1;
+  m--;
+  n--;
+  while (m >= 0 || n >= 0) {
+    if (m === -1 || nums1[m] <= nums2[n]) {
+      nums1[total] = nums2[n--];
+    } else {
+      nums1[total] = nums1[m--];
+    }
+    total--;
+  }
+  return nums1;
+};
+```
+
+## 验证回文串
+
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+说明：本题中，我们将空字符串定义为有效的回文串。
+
+示例 1:
+
+输入: "A man, a plan, a canal: Panama"
+输出: true
+解释："amanaplanacanalpanama" 是回文串
+示例 2:
+
+输入: "race a car"
+输出: false
+解释："raceacar" 不是回文串
+
+> 用双指针头尾向中间靠拢
+
+```js
+var isPalindrome = function(s) {
+  s = s.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
+  let l = 0,
+    r = s.length - 1;
+  while (l <= r) {
+    if (s[l] === s[r]) {
+      l++;
+      r--;
+    } else {
+      return false;
+    }
+  }
+  return true;
+};
+```
