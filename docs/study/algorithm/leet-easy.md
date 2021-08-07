@@ -868,3 +868,183 @@ var isPalindrome = function(s) {
   return true;
 };
 ```
+
+## 回文链表
+
+请判断一个链表是否为回文链表。
+
+示例 1:
+
+输入: 1->2
+输出: false
+示例 2:
+
+输入: 1->2->2->1
+输出: true
+
+思路 1 ： 把值全部放进数组里然后头尾指针遍历
+
+思路 2：
+先用快慢指针的手法，让我们知道这个链表的中点是哪，然后从中点截断
+然后截断成为两个链表，把后面的链表翻转
+最后依次去判断这两个链表每一项是否相同
+
+```js
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var isPalindrome = function(head) {
+  let l = head,
+    r = head,
+    prev;
+  while (r && r.next) {
+    l = l.next;
+    r = r.next.next;
+  }
+  // 1 2 3 4
+  let next = null;
+  while (l) {
+    const pre = l.next;
+    l.next = next;
+    next = l;
+    l = pre;
+  }
+  console.log(next, head, l);
+  while (next && head) {
+    if (next.val !== head.val) {
+      return false;
+    }
+    next = next.next;
+    head = head.next;
+  }
+  return true;
+};
+```
+
+## 移动零
+
+题目如下：给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+示例:
+
+输入: [0,1,0,3,12]
+输出: [1,3,12,0,0]
+说明:
+
+必须在原数组上操作，不能拷贝额外的数组。
+尽量减少操作次数。
+
+> 快慢指针 将非 0 的位置和 0 的位置不断置换
+
+```js
+var moveZeroes = function(nums) {
+  let i = (j = 0);
+  while (i < nums.length) {
+    if (nums[i] !== 0) {
+      [nums[i], nums[j]] = [nums[j], nums[i]];
+      j++;
+    }
+    i++;
+  }
+
+  return nums;
+};
+```
+
+## 反转字符串
+
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。
+
+示例 1：
+
+输入：["h","e","l","l","o"]
+输出：["o","l","l","e","h"]
+示例 2：
+
+输入：["H","a","n","n","a","h"]
+输出：["h","a","n","n","a","H"]
+
+```js
+var reverseString = function(s) {
+  let l = 0;
+  let r = s.length - 1;
+  while (l < r) {
+    [s[l], s[r]] = [s[r], s[l]];
+    l++;
+    r--;
+  }
+  return s;
+};
+```
+
+## 两个数组的交集 II
+
+示例 1：
+
+输入：nums1 = [1,2,2,1], nums2 = [2,2]
+输出：[2,2]
+示例 2:
+
+输入：nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出：[4,9]
+
+说明：
+
+输出结果中每个元素出现的次数，应与元素在两个数组中出现次数的最小值一致。
+我们可以不考虑输出结果的顺序。
+进阶：
+
+如果给定的数组已经排好序呢？你将如何优化你的算法？
+如果  nums1  的大小比  nums2  小很多，哪种方法更优？
+如果  nums2  的元素存储在磁盘上，内存是有限的，并且你不能一次加载所有的元素到内存中，你该怎么办？
+
+> 先排序后去比对
+
+```js
+const sort = (nums) => {
+  if (nums.length <= 1) return nums;
+  let i = 0;
+  while (i < nums.length) {
+    let j = 0;
+    while (j < i) {
+      if (nums[i] < nums[j]) [nums[i], nums[j]] = [nums[j], nums[i]];
+      j++;
+    }
+    i++;
+  }
+  return nums;
+};
+var intersect = function(nums1, nums2) {
+  let n1 = (n2 = 0);
+  const num1 = sort(nums1);
+  const num2 = sort(nums2);
+  const arr = [];
+  while (n1 < num1.length && n2 < num2.length) {
+    if (num1[n1] === num2[n2]) {
+      arr.push(num1[n1]);
+      n1++;
+      n2++;
+    } else if (num1[n1] > num2[n2]) {
+      n2++;
+    } else {
+      n1++;
+    }
+  }
+  console.log(num1, num2, arr);
+  return arr;
+};
+```
+
+**二叉树（DFS）**题目
