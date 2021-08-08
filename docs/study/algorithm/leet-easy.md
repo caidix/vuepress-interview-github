@@ -1048,3 +1048,423 @@ var intersect = function(nums1, nums2) {
 ```
 
 **二叉树（DFS）**题目
+
+首先我们要学会二叉树的前序遍历，中序遍历以及后序遍历
+
+## 前序遍历
+
+> （按照访问根节点——左子树——右子树的方式遍历这棵树）
+
+![prototype](/assets/algorithm/640.webp)
+
+深度优先遍历，先遍历左子树，再遍历右子树
+
+```js
+// 迭代 出入栈
+var preorderTraversal = function(root) {
+  let stack = [];
+  let arr = [];
+  while (root || stack.length) {
+    while (root) {
+      stack.push(root);
+      arr.push(root.val);
+      root = root.left;
+    }
+    root = stack.pop();
+    root = root.right;
+  }
+  return arr;
+};
+
+// 递归
+var preorderTraversal = function(root) {
+  let arr = [];
+  if (root) {
+    arr.push(root.val);
+  } else {
+    return arr;
+  }
+  if (root.left) {
+    arr = arr.concat(preorderTraversal(root.left));
+  }
+  if (root.right) {
+    arr = arr.concat(preorderTraversal(root.right));
+  }
+  return arr;
+};
+```
+
+## 中序遍历
+
+> （按照访问左子树——根节点——右子树的方式遍历这棵树）
+
+![prototype](/assets/algorithm/641.webp)
+
+中序遍历在递归上就是简单把顺序改一下
+
+```js
+// 栈
+var inorderTraversal = function(root) {
+  const stack = [],
+    arr = [];
+  while (stack.length || root) {
+    while (root) {
+      stack.push(root);
+      root = root.left;
+    }
+    root = stack.pop();
+    arr.push(root.val);
+    root = root.right;
+  }
+  return arr;
+};
+// 递归
+var inorderTraversal = function(root) {
+  const res = [];
+  const loop = (root) => {
+    if (!root) return;
+    loop(root.left);
+    res.push(root.val);
+    loop(root.right);
+  };
+  loop(root);
+  return res;
+};
+```
+
+## 后序遍历
+
+> （按照访问左子树——右子树——根节点的方式遍历这棵树）
+
+![prototype](/assets/algorithm/642.webp)
+
+栈的方法就和原来不一样了，需要从右边开始入栈，并且结果数组内的值需要从前开始插入，这样才能使得最顶端的根节点的值排在最后
+
+```js
+// 栈
+
+// 递归。同样是换一个位置
+var postorderTraversal = function(root) {
+  const res = [];
+  const loop = (root) => {
+    if (!root) return;
+    loop(root.left);
+    loop(root.right);
+    res.push(root.val);
+  };
+  loop(root);
+  return res;
+};
+```
+
+## 对称二叉树
+
+给定一个二叉树，检查它是否是镜像对称的。
+
+例如，二叉树  [1,2,2,3,4,4,3] 是对称的。
+
+```js
+   1
+  /  \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+但是下面这个  [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+```js
+  1
+ / \
+2   2
+ \   \
+  3   3
+```
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isSymmetric = function(root) {
+  if (!root) return root;
+  const isSame = (leftNode, rightNode) => {
+    if (leftNode === null && rightNode === null) return true;
+    if (leftNode === null || rightNode === null) return false;
+    return (
+      leftNode.val === rightNode.val &&
+      isSame(leftNode.left, rightNode.right) &&
+      isSame(leftNode.right, rightNode.left)
+    );
+  };
+  return isSame(root.left, root.right);
+};
+```
+
+## 二叉树的最大深度
+
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+说明:  叶子节点是指没有子节点的节点。
+
+示例：
+给定二叉树 [3,9,20,null,null,15,7]，
+
+```js
+   3
+  / \
+  9  20
+    /  \
+   15   7
+```
+
+返回它的最大深度 3 。
+
+> 只要遍历到这个节点既没有左子树，又没有右子树的时候
+> 说明就到底部了，这个时候如果之前记录了深度，就可以比较是否比之前记录的深度大，大就更新深度
+> 然后以此类推，一直比较到深度最大的
+
+```js
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxDepth = function(root) {
+  if (!root) return root;
+  let maxDeep = 0;
+  const loopDeep = (root, deep) => {
+    if (!root.left && !root.right) {
+      maxDeep = Math.max(deep, maxDeep);
+    }
+    if (root.left) {
+      loopDeep(root.left, deep + 1);
+    }
+    if (root.right) {
+      loopDeep(root.right, deep + 1);
+    }
+  };
+  loopDeep(root, 1);
+  return maxDeep;
+};
+```
+
+## 将有序数组转化为二叉搜索树
+
+给你一个整数数组 nums ，其中元素已经按 升序 排列，请你将其转换为一棵 高度平衡 二叉搜索树。
+
+高度平衡 二叉树是一棵满足「每个节点的左右两个子树的高度差的绝对值不超过 1 」的二叉树。
+
+![prototype](https://assets.leetcode.com/uploads/2021/02/18/btree1.jpg)
+
+输入：nums = [-10,-3,0,5,9]
+输出：[0,-3,9,-10,null,5]
+解释：[0,-10,5,null,-3,null,9] 也将被视为正确答案：
+![prototype](https://assets.leetcode.com/uploads/2021/02/18/btree2.jpg)
+
+输入：nums = [1,3]
+输出：[3,1]
+解释：[1,3] 和 [3,1] 都是高度平衡二叉搜索树。
+![prototype](https://assets.leetcode.com/uploads/2021/02/18/btree.jpg)
+
+- 构建一颗树包括：构建 root、构建 root.left 和 root.right
+- 题目要求"高度平衡" — 构建 root 时候，选择数组的中间元素作为 root 节点值，即可保持平衡。
+- 递归函数可以传递数组，也可以传递指针，选择传递指针的时候：l r 分别代表参与构建 BST 的数组的首尾索引。
+
+> 中序遍历(一种方法，三种策略)，总是选择中间位置左边的数字作为根节点
+
+```js
+var sortedArrayToBST = function(nums) {
+  return toBST(nums, 0, nums.length - 1);
+};
+
+const toBST = function(nums, l, r) {
+  if (l > r) {
+    return null;
+  }
+  const mid = (l + r) >> 1;
+  //(l + r + 1)  中序遍历，总是选择中间位置右边的数字作为根节点
+  // Math.floor(Math.random() * 2 ) 中序遍历，选择任意一个中间位置数字作为根节点
+  const root = new TreeNode(nums[mid]);
+  root.left = toBST(nums, l, mid - 1);
+  root.right = toBST(nums, mid + 1, r);
+
+  return root;
+};
+```
+
+## 有效的括号
+
+这是一道很典型的用栈解决的问题， 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+
+有效字符串需满足：
+
+左括号必须用相同类型的右括号闭合。左括号必须以正确的顺序闭合。
+
+示例 1：
+
+输入：s = "()"
+输出：true
+示例 2：
+
+输入：s = "()[]{}"
+输出：true
+示例 3：
+
+输入：s = "(]"
+输出：false
+示例 4：
+
+输入：s = "([)]"
+输出：false
+
+右括号前面，必须是相对应的左括号，才能抵消！
+右括号前面，不是对应的左括号，那么该字符串，一定不是有效的括号！
+也就是说左括号我们直接放入栈中即可，发现是右括号就要对比是否跟栈顶元素相匹配，不匹配就返回 false
+
+```js
+var isValid = function(s) {
+  if (s.length <= 1) return false;
+  const stack = [];
+  const hash = {
+    "(": ")",
+    "{": "}",
+    "[": "]",
+  };
+  let i = 0;
+  while (i < s.length) {
+    if (hash[s[i]]) {
+      stack.push(s[i]);
+    } else if (stack.length && hash[stack[stack.length - 1]] === s[i]) {
+      stack.pop();
+    } else {
+      return false;
+    }
+    i++;
+  }
+  if (stack.length) return false;
+  return true;
+};
+// 相同的方法
+var isValid = function(s) {
+  const stask = [];
+  const enums = {
+    "}": "{",
+    "]": "[",
+    ")": "(",
+  };
+  let i = 0;
+  while (i < s.length) {
+    stask.push(s[i]);
+
+    let len = stask.length;
+    if (len < 2) {
+      i++;
+      continue;
+    }
+    const el1 = stask[len - 1];
+    const el2 = stask[len - 2];
+    if (enums[el1] === el2) {
+      stask.pop();
+      stask.pop();
+    }
+    i++;
+  }
+  return stask.length === 0;
+};
+```
+
+## 最小栈
+
+设计一个支持 push ，pop ，top 操作，并能在常数时间内检索到最小元素的栈。
+
+push(x) —— 将元素 x 推入栈中。
+pop() —— 删除栈顶的元素。
+top() —— 获取栈顶元素。
+getMin() —— 检索栈中的最小元素。
+
+示例:
+
+输入：
+["MinStack","push","push","push","getMin","pop","top","getMin"][],[-2],[0],[-3],[],[],[],[]]
+
+输出：
+[null,null,null,null,-3,null,0,-2]
+
+解释：
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin(); --> 返回 -3.
+minStack.pop();
+minStack.top(); --> 返回 0.
+minStack.getMin(); --> 返回 -2.
+
+> 思路：用一个辅助栈来记录最小值，让其在每一刻时的入参都为最小值
+
+```js
+/**
+ * initialize your data structure here.
+ */
+var MinStack = function() {
+  this.stack = [];
+  this.minStack = [];
+};
+
+/**
+ * @param {number} val
+ * @return {void}
+ */
+MinStack.prototype.push = function(val) {
+  this.stack.push(val);
+  if (
+    this.minStack.length === 0 ||
+    val < this.minStack[this.minStack.length - 1]
+  ) {
+    this.minStack.push(val);
+  } else {
+    this.minStack.push(this.minStack[this.minStack.length - 1]);
+  }
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function() {
+  this.stack.pop();
+  this.minStack.pop();
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.top = function() {
+  return this.stack[this.stack.length - 1];
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.getMin = function() {
+  return this.minStack[this.minStack.length - 1];
+};
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * var obj = new MinStack()
+ * obj.push(val)
+ * obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.getMin()
+ */
+```
