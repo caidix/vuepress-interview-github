@@ -1468,3 +1468,247 @@ MinStack.prototype.getMin = function() {
  * var param_4 = obj.getMin()
  */
 ```
+
+**动态规划**算法
+
+## 最大子序和
+
+给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+示例 1：
+
+输入：nums = [-2,1,-3,4,-1,2,1,-5,4]
+输出：6
+解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。
+示例 2：
+
+输入：nums = [1]
+输出：1
+示例 3：
+
+输入：nums = [0]
+输出：0
+
+> 思路：动态规划。我们动态转移方程中，dp 表示每一个 nums 下标的最大自序和，所以 dp[i]的意思为：包括下标 i 之前的最大连续子序列和为 dp[i]。
+> dp[i]只有两个方向可以推出来：
+
+1. 如果 dp[i - 1] < 0，也就是当前遍历到 nums 的 i，之前的最大子序和是负数，那么我们就没必要继续加它了，因为 dp[i] = dp[i - 1] + nums[i] 会比 nums[i]更小，所以此时还不如 dp[i] = nums[i]，就是目前遍历到 i 的最大子序和呢
+2. 同理 dp[i - 1] > 0，说明 nums[i]值得去加 dp[i - 1]，此时可能会比 nums[i]更大
+
+```js
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+  let ads = 0,
+    max = nums[0],
+    arrs = [nums[0]];
+
+  for (let i = 1; i < nums.length; i++) {
+    const num = arrs[i - 1];
+    if (num < 0) {
+      arrs.push(nums[i]);
+      arrs[i] = nums[i];
+    } else {
+      arrs[i] = num + nums[i];
+    }
+    max = Math.max(max, arrs[i]);
+  }
+  return max;
+};
+
+var maxSubArray = function(nums) {
+  let pre = 0,
+    maxAns = nums[0];
+  nums.forEach((x) => {
+    pre = Math.max(pre + x, x);
+    maxAns = Math.max(maxAns, pre);
+  });
+  return maxAns;
+};
+```
+
+## 爬楼梯
+
+假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+注意：给定 n 是一个正整数。
+
+示例 1：
+
+输入： 2
+输出： 2
+解释： 有两种方法可以爬到楼顶。
+
+1.  1 阶 + 1 阶
+2.  2 阶
+    示例 2：
+
+输入： 3
+输出： 3
+解释： 有三种方法可以爬到楼顶。
+
+1.  1 阶 + 1 阶 + 1 阶
+2.  1 阶 + 2 阶
+3.  2 阶 + 1 阶
+
+> 思路： 反过来看就是斐波那契数列。假如我要到第 10 层有 dp[10]种方法 ,那么我有可能是从第八层走也可能从第九层走，所以 dp[10] 的方法等于 dp[9]+dp[8]，从而可以算出动态规划方程为 dp[n] = dp[n-1] + dp[n-2]
+
+```js
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function(n) {
+  let n1 = 1,
+    n2 = 2;
+  for (let i = 2; i <= n; i++) {
+    [n2, n1] = [n2 + n1, n2];
+  }
+  return n1;
+};
+```
+
+**数学问题**题目
+
+## 加一
+
+给定一个由 整数 组成的 非空 数组所表示的非负整数，在该数的基础上加一。
+
+最高位数字存放在数组的首位， 数组中每个元素只存储单个数字。
+
+你可以假设除了整数 0 之外，这个整数不会以零开头。
+
+示例  1：
+
+输入：digits = [1,2,3]
+输出：[1,2,4]
+解释：输入数组表示数字 123。
+示例  2：
+
+输入：digits = [4,3,2,1]
+输出：[4,3,2,2]
+解释：输入数组表示数字 4321。
+示例 3：
+
+输入：digits = [0]
+输出：[1]
+
+提示：
+
+1 <= digits.length <= 100
+0 <= digits[i] <= 9
+
+> 思路： 简单粗暴法：直接判断最后一项是不是 9 是 9 就变成 0 然后循环倒数第 n-1 项是不是 9，不是的话就+1 结束，是的话继续循环即可。不断进位法：从后遍历所有的数然后取余等各种运算。
+
+```js
+var plusOne = function(digits) {
+  let i = digits.length - 1;
+  while (i > -1) {
+    if (digits[i] == 9) {
+      digits[i] = 0;
+      if (i == 0) {
+        digits.unshift(1);
+        return digits;
+      }
+      i--;
+    } else {
+      digits[i] = digits[i] + 1;
+      return digits;
+    }
+  }
+  return digits;
+};
+
+var plusOne = function(digits) {
+  let len = digits.length - 1,
+    atd = 1,
+    rest = 0;
+  while (len >= 0) {
+    const value = digits[len];
+    const next = value + atd;
+    atd = Math.floor(next / 10);
+    const nvalue = next % 10;
+    digits[len] = nvalue;
+    len--;
+  }
+  if (atd === 1) {
+    digits.unshift(atd);
+  }
+  console.log(rest);
+  return digits;
+};
+```
+
+## x 的平方根
+
+实现 int sqrt(int x) 函数。
+
+计算并返回 x 的平方根，其中 x 是非负整数。
+
+由于返回类型是整数，结果只保留整数的部分，小数部分将被舍去。
+
+示例 1:
+
+输入: 4
+输出: 2
+
+示例 2:
+
+输入: 8
+输出: 2
+说明: 8 的平方根是 2.82842...,
+由于返回类型是整数，小数部分将被舍去。
+
+这道题是典型的二分法解题，所以我们需要熟悉二分法的通用模板，我们出一个题：
+
+在 [1, 2, 3, 4, 5, 6] 中找到 4，若存在则返回下标，不存在返回-1
+
+```js
+const arr = [1, 2, 3, 4, 5, 6];
+function getIndex1(arr, key) {
+  let low = 0;
+  const high = arr.length - 1;
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    if (key === arr[mid]) {
+      return mid;
+    }
+    if (key > arr[mid]) {
+      low = mid + 1;
+    } else {
+      height = mid - 1;
+    }
+  }
+  return -1;
+}
+console.log(getIndex1(arr, 5)); // 4
+```
+
+所以这道题的意思就是，我们找一个数平方跟 x 最相近的数，二分法的用法中也有找相近数的功能
+
+所以代码如下：
+
+```js
+var mySqrt = function(x) {
+let [l , r] = [0, x];
+let ans = -1;
+while(l <= r) {
+const mid = (l + r) >> 1;
+if(mid _ mid > x){
+r = mid - 1
+} else if(mid _ mid < x){
+ans = mid; // 防止越界
+l = mid + 1;
+} else {
+ans = mid;
+return ans;
+}
+}
+return ans;
+};
+};
+```
