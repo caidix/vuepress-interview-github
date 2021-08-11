@@ -1694,21 +1694,20 @@ console.log(getIndex1(arr, 5)); // 4
 
 ```js
 var mySqrt = function(x) {
-let [l , r] = [0, x];
-let ans = -1;
-while(l <= r) {
-const mid = (l + r) >> 1;
-if(mid _ mid > x){
-r = mid - 1
-} else if(mid _ mid < x){
-ans = mid; // 防止越界
-l = mid + 1;
-} else {
-ans = mid;
-return ans;
-}
-}
-return ans;
-};
+  let [l, r] = [0, x];
+  let ans = -1;
+  while (l <= r) {
+    const mid = (l + r) >> 1;
+    if (mid * mid > x) {
+      r = mid - 1;
+    } else if (mid * mid < x) {
+      ans = mid; // 防止越界
+      l = mid + 1;
+    } else {
+      ans = mid;
+      return ans;
+    }
+  }
+  return ans;
 };
 ```
