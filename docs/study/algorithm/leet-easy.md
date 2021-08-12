@@ -1711,3 +1711,475 @@ var mySqrt = function(x) {
   return ans;
 };
 ```
+
+## Excel 表序列号
+
+给你一个整数 columnNumber ，返回它在 Excel 表中相对应的列名称。
+
+例如：
+
+A -> 1
+B -> 2
+C -> 3
+...
+Z -> 26
+AA -> 27
+AB -> 28
+...
+示例 1：
+
+输入：columnNumber = 1
+输出："A"
+示例 2：
+
+输入：columnNumber = 28
+输出："AB"
+示例 3：
+
+输入：columnNumber = 701
+输出："ZY"
+示例 4：
+
+输入：columnNumber = 2147483647
+输出："FXSHRXW"
+
+说白了，这就是一道 26 进制的问题，以前我们知道 10 进制转 2 进制就是不停的除 2，把余数加起来，26 进制也是一样，不停的除 26。例如“FXSHRXW” 中的每个字母对应的序号分别是：[6,24,19,8,18,24,23][6,24,19,8,18,24,23]（其中 \text{A}A 到 \text{Z}Z 分别对应 11 到 2626），则列名称对应的列序号为：
+
+```js
+23×26^0+24×26^1+18×26^2+8×26^3+19×26^4+24×26^5+6×26^6=2147483647
+```
+
+题解：
+
+```js
+var titleToNumber = function(columnTitle) {
+  let number = 0;
+  let multiple = 1;
+  for (let i = columnTitle.length - 1; i >= 0; i--) {
+    const k = columnTitle[i].charCodeAt() - "A".charCodeAt() + 1;
+    number += k * multiple;
+    multiple *= 26;
+  }
+  return number;
+};
+```
+
+## 阶乘后的零
+
+给定一个整数 n，返回 n! 结果尾数中零的数量。
+
+示例 1:
+
+输入: 3
+输出: 0
+解释: 3! = 6, 尾数中没有零。
+示例 2:
+
+输入: 5
+输出: 1
+解释: 5! = 120, 尾数中有 1 个零.
+
+思路：
+首先末尾有多少个 0 ，只需要给当前数乘以一个 10 就可以加一个 0。
+
+再具体对于 5!，也就是 5 \* 4 \* 3 \* 2 \* 1 = 120，我们发现结果会有一个 0，原因就是 2 和 5 相乘构成了一个 10。而对于 10 的话，其实也只有 2 \* 5 可以构成，所以我们只需要找有多少对 2/5。
+
+我们把每个乘数再稍微分解下，看一个例子。
+
+11! = 11 \* 10 \* 9 \* 8 \* 7 \* 6 \* 5 \* 4 \* 3 \* 2 \* 1 = 11 \* (2 \* 5) \* 9 \* (4 \* 2) \* 7 \* (3 \* 2) \* (1 \* 5) \* (2 \* 2) \* 3 \* (1 \* 2) \* 1
+
+对于含有 2 的因子的话是 1 \* 2, 2 \* 2, 3 \* 2, 4 \* 2 ...
+
+对于含有 5 的因子的话是 1 \* 5, 2 \* 5...
+
+含有 2 的因子每两个出现一次，含有 5 的因子每 5 个出现一次，所有 2 出现的个数远远多于 5，换言之找到一个 5，一定能找到一个 2 与之配对。所以我们只需要找有多少个 5。
+
+直接的，我们只需要判断每个累乘的数有多少个 5 的因子即可。
+
+```js
+var trailingZeroes = function(n) {
+  let r = 0;
+  while (n > 1) {
+    n = Math.floor(n / 5);
+    r += n;
+  }
+  return r;
+};
+```
+
+## 丢失的数字
+
+给定一个包含 [0, n] 中 n 个数的数组 nums ，找出 [0, n] 这个范围内没有出现在数组中的那个数。
+
+进阶：
+
+你能否实现线性时间复杂度、仅使用额外常数空间的算法解决此问题?
+
+示例 1：
+
+输入：nums = [3,0,1]
+输出：2
+解释：n = 3，因为有 3 个数字，所以所有的数字都在范围 [0,3] 内。2 是丢失的数字，因为它没有出现在 nums 中。
+示例 2：
+
+输入：nums = [0,1]
+输出：2
+解释：n = 2，因为有 2 个数字，所以所有的数字都在范围 [0,2] 内。2 是丢失的数字，因为它没有出现在 nums 中。
+
+思路： 先把这段长度的总和算出来减去数组里的数剩下的数就是不在范围内的数
+
+```js
+var missingNumber = function(nums) {
+  let len = nums.length,
+    res = ((len + 1) * len) / 2;
+  for (let i = 0; i < len; i++) {
+    res -= nums[i];
+  }
+  return res;
+};
+```
+
+## 3 的幂
+
+给定一个整数，写一个函数来判断它是否是 3 的幂次方。如果是，返回 true ；否则，返回 false 。
+
+整数 n 是 3 的幂次方需满足：存在整数 x 使得 n == 3 的 x 次方
+
+示例 1：
+
+输入：n = 27
+输出：true
+示例 2：
+
+输入：n = 0
+输出：false
+示例 3：
+
+输入：n = 9
+输出：true
+
+```js
+var isPowerOfThree = function(n) {
+  while (n >= 3) {
+    n /= 3;
+  }
+  return n === 1;
+};
+```
+
+## Fizz Buzz
+
+写一个程序，输出从 1 到 n 数字的字符串表示。
+
+如果 n 是 3 的倍数，输出“Fizz”；
+
+如果 n 是 5 的倍数，输出“Buzz”；
+
+如果 n 同时是 3 和 5 的倍数，输出 “FizzBuzz”。
+
+示例：
+
+n = 15,
+
+返回:
+[
+"1",
+"2",
+"Fizz",
+"4",
+"Buzz",
+"Fizz",
+"7",
+"8",
+"Fizz",
+"Buzz",
+"11",
+"Fizz",
+"13",
+"14",
+"FizzBuzz"
+]
+
+```js
+var fizzBuzz = function(n) {
+  const arr = [];
+  for (let i = 1; i <= n; i++) {
+    const isThree = i % 3 === 0,
+      isFive = i % 5 === 0;
+    if (isThree && isFive) {
+      arr.push("FizzBuzz");
+    } else if (isThree) {
+      arr.push("Fizz");
+    } else if (isFive) {
+      arr.push("Buzz");
+    } else {
+      arr.push(i + "");
+    }
+  }
+  return arr;
+};
+```
+
+## 整数反转
+
+给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。
+
+如果反转后整数超过 32 位的有符号整数的范围  [−231,  231 − 1] ，就返回 0。
+
+假设环境不允许存储 64 位整数（有符号或无符号）。
+
+示例 1：
+
+输入：x = 123
+输出：321
+示例 2：
+
+输入：x = -123
+输出：-321
+示例 3：
+
+输入：x = 120
+输出：21
+示例 4：
+
+输入：x = 0
+输出：0
+
+```js
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var reverse = function(x) {
+  let res = 0;
+  while (x !== 0) {
+    const l = x % 10;
+    res = res * 10 + l;
+    if (res > Math.pow(2, 31) - 1 || res < Math.pow(-2, 31)) {
+      return 0;
+    }
+    x = x > 0 ? Math.floor(x / 10) : Math.ceil(x / 10);
+  }
+  return res;
+};
+```
+
+## 环形链表
+
+给定一个链表，判断链表中是否有环。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+如果链表中存在环，则返回 true 。 否则，返回 false 。
+
+![huan](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist.png)
+输入：head = [3,2,0,-4], pos = 1
+输出：true
+解释：链表中有一个环，其尾部连接到第二个节点。
+
+![huan2](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test2.png)
+输入：head = [1,2], pos = 0
+输出：true
+解释：链表中有一个环，其尾部连接到第一个节点。
+
+![huan3](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test3.png)
+输入：head = [1], pos = -1
+输出：false
+解释：链表中没有环。
+
+> 思路：1. 快慢指针，快指针每次走两步，慢指针每次走一步，如果是有环的链表，最终他们一定会相遇。2. 用 hash 表存储不断循环知道 next 不存在或是 hash 表内存在相同元素为止。3. 打点标记法，走过的路给他的对象内存中写入一个属性作为标记。
+
+```js
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+// 快慢
+var hasCycle = function(head) {
+  if (!head || !head.next) return false;
+  let l = head,
+    r = head;
+  while (r.next && r.next.next) {
+    l = l.next;
+    r = r.next.next;
+    if (l === r) return true;
+  }
+  return false;
+};
+
+// 打点
+var hasCycle = function(head) {
+  let traversingNode = head;
+  while (traversingNode) {
+    if (traversingNode.isVistitd) return true;
+    traversingNode.isVistitd = true;
+    traversingNode = traversingNode.next;
+  }
+  return false;
+};
+```
+
+## 相交链表
+
+给你两个单链表的头节点  headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
+
+图示两个链表在节点 c1 开始相交：
+
+![huan3](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_statement.png)
+题目数据 保证 整个链式结构中不存在环。
+
+注意，函数返回结果后，链表必须 保持其原始结构 。
+
+![huan3](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_example_1.png)
+
+```md
+输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,0,1,8,4,5], skipA = 2, skipB = 3
+输出：Intersected at '8'
+解释：相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。
+从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,0,1,8,4,5]。
+在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。
+```
+
+![huan3](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_example_2.png)
+
+```md
+输入：intersectVal = 2, listA = [0,9,1,2,4], listB = [3,2,4], skipA = 3, skipB = 1
+输出：Intersected at '2'
+解释：相交节点的值为 2 （注意，如果两个链表相交则不能为 0）。
+从各自的表头开始算起，链表 A 为 [0,9,1,2,4]，链表 B 为 [3,2,4]。
+在 A 中，相交节点前有 3 个节点；在 B 中，相交节点前有 1 个节点。
+```
+
+![huan3](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_example_3.png)
+
+```md
+输入：intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
+输出：null
+解释：从各自的表头开始算起，链表 A 为 [2,6,4]，链表 B 为 [1,5]。
+由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。
+这两个链表不相交，因此返回 null 。
+```
+
+> 思路： 相交的题都可以尝试使用标记法和双指针结合，hash 表
+
+```js
+var getIntersectionNode = function(headA, headB) {
+  let l = headA,
+    r = headB;
+  while (l || r) {
+    if (l) {
+      if (l.hasTag) {
+        return l;
+      }
+      l.hasTag = true;
+      l = l.next;
+    }
+    if (r) {
+      if (r.hasTag) {
+        return r;
+      }
+      r.hasTag = true;
+      r = r.next;
+    }
+  }
+  return null;
+};
+
+// hash
+var getIntersectionNode = function(headA, headB) {
+  let l = headA,
+    r = headB;
+  const sets = new Set();
+  while (l) {
+    sets.add(l);
+    l = l.next;
+  }
+  while (r) {
+    if (sets.has(r)) {
+      return r;
+    }
+    r = r.next;
+  }
+  return null;
+};
+```
+
+> 单纯用双指针的方法(两个对的人终究会相遇)
+> 只有当链表 headA 和 headB 都不为空时，两个链表才可能相交。因此首先判断链表 headA 和 headB 是否为空，如果其中至少有一个链表为空，则两个链表一定不相交，返回 null。
+
+- 情况一：两个链表相交： 如果两个链表相交前长度相同，那么一起 next 的时候就会碰到交点。如果不同，则指针 pA 会遍历完链表 headA，指针 pB 会遍历完链表 headB，两个指针不会同时到达链表的尾节点，然后指针 pA 移到链表 headB 的头节点，指针 pB 移到链表 headA 的头节点，然后两个指针继续移动，在指针 pA 移动了 a+c+b 次、指针 pB 移动了 b+c+a 次之后，两个指针会同时到达两个链表相交的节点，该节点也是两个指针第一次同时指向的节点，此时返回相交的节点
+
+- 情况二： 两个链表不相交：如果长度相同，双方到达最尾端同时为 null，这个时候跳出循环返回 null。如果不同，两个链表没有公共的节点，假设 a 节点长度为 m，b 节点长度为 n，则他们都会在 a 节点移动 m+n 次，b 节点移动 n+m 次的时候同时变成 null。
+
+```js
+var getIntersectionNode = function(headA, headB) {
+  if (headA === null || headB === null) {
+    return null;
+  }
+  let pA = headA,
+    pB = headB;
+  while (pA !== pB) {
+    pA = pA === null ? headB : pA.next;
+    pB = pB === null ? headA : pB.next;
+  }
+  return pA;
+};
+```
+
+## 快乐数
+
+编写一个算法来判断一个数 n 是不是快乐数。
+
+「快乐数」定义为：
+
+- 对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。
+- 然后重复这个过程直到这个数变为 1，也可能是 无限循环 但始终变不到 1。
+- 如果 可以变为   1，那么这个数就是快乐数。
+- 如果 n 是快乐数就返回 true ；不是，则返回 false 。
+
+```md
+示例 1：
+
+输入：19
+输出：true
+解释：
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+示例 2：
+
+输入：n = 2
+输出：false
+```
+
+> 思路： 该题最后会出现两种结局：
+
+- 最终会得到 11。
+- 最终会进入循环， 也就是出现过上次出现了的结果，那么应该返回 false 了。
+
+那么思路有两种：
+
+1. hash 法，保存所有走过的快乐值， 如果得 1 则是快乐数，如果重复，那么就进入了死循环，不是快乐数
+
+2. 快慢指针：如果是快乐树， 快指针会先一步达到 1，则为 true。如果不是，他们终将在一个重复的数字上相遇。
+
+```js
+var isHappy = function(n) {
+  let m = String(n),
+    res = 0;
+  const map = new Set();
+  while (res !== 1) {
+    for (let i = 0; i < m.length; i++) {
+      res += Math.pow(Number(m[i]), 2);
+    }
+    if (res !== 1) {
+      if (map.has(res)) return false;
+      m = String(res);
+      map.add(res);
+      res = 0;
+    }
+  }
+  return true;
+};
+```
