@@ -1,59 +1,59 @@
-.about
-  .aboutNav
-    list-style none
-    display flex
-    justify-content space-between
-    padding 0
-    // box-shadow 0 1px 6px 0 rgba(0,0,0,0.2)
-    .aboutNavItem
-      width 12.5%
-      background #F0F2F4
-      color #000000
-      padding 5px 10px
-      text-align center
-      cursor pointer
-      &:hover
-        background #c93756
-        color #ffffff
-  .aboutContent
-    width 100%;
-    box-shadow 0 1px 6px 0 rgba(0,0,0,0.2)
-    border-radius 0.25rem
-    padding 10px
-    box-sizing border-box
-    .colors
-      .midnightblue
-        color midnightblue
-        background-color midnightblue
-      .blue
-        color blue
-        background-color blue
-      .deepskyblue
-        color deepskyblue
-        background-color deepskyblue
-      .cornflowerblues
-        color cornflowerblue
-        background-color cornflowerblue
-      .lightskyblue
-        color lightskyblue
-        background-color lightskyblue
-        height 21px
-      li
-        height 21px
-        &:hover
-          color #ffffff
-    ul
-      list-style none
-      line-height 21px
-      img
-        width 16px
-        height 16px
-        margin 0 5px
-      li
-        // background #F0F2F4
-        padding 0 5px
-        margin-bottom 5px
-        display: flex;
-        align-items: center;
-        &:last-child
-          margin 0
+
+// 评论区颜色重置
+.gt-container
+  .gt-ico-tip
+    &::after
+      content: '。( Win + . ) 或 ( ⌃ + ⌘ + ␣ ) 打开表情'
+      color: #999
+      font-size: .8rem
+  .gt-meta
+    border-color var(--borderColor)!important
+  .gt-comments-null
+    color var(--textColor)
+    opacity .5
+  .gt-header-textarea
+    color var(--textColor)
+    background rgba(180,180,180,0.1)!important
+  .gt-btn
+    border-color $accentColor!important
+    background-color $accentColor!important
+  .gt-btn-preview
+    background-color rgba(255,255,255,0)!important
+    color $accentColor!important
+  a
+    color $accentColor!important
+  .gt-svg svg
+    fill $accentColor!important
+  .gt-comment-content,.gt-comment-admin .gt-comment-content
+    background-color rgba(150,150,150,0.1)!important
+    &:hover
+      box-shadow 0 0 25px rgba(150,150,150,.5)!important
+    .gt-comment-body
+      color var(--textColor)!important
+
+
+// qq徽章
+.qq
+  position: relative;
+.qq::after
+  content: "可撩";
+  background: $accentColor;
+  color:#fff;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size:12px;
+  position: absolute;
+  top: -4px;
+  right: -35px;
+  transform:scale(0.85);
+
+// demo模块图标颜色
+body .vuepress-plugin-demo-block__wrapper
+  &,.vuepress-plugin-demo-block__display
+    border-color rgba(160,160,160,.3)
+  .vuepress-plugin-demo-block__footer:hover
+    .vuepress-plugin-demo-block__expand::before
+      border-top-color: $accentColor !important;
+      border-bottom-color: $accentColor !important;
+    svg
+      fill: $accentColor !important;
