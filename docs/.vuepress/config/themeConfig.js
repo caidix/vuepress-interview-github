@@ -7,7 +7,7 @@ module.exports = {
   nav,
   sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
   logo: "/assets/icon.jpg", // 导航栏logo
-  repo: "CD/vuepress-theme-vdoing", // 导航栏右侧生成Github链接
+  repo: "/caidix/vuepress-interview-github", // 导航栏右侧生成Github链接
   searchMaxSuggestions: 10, // 搜索结果显示最大数
   lastUpdated: "上次更新", // 开启更新时间，并配置前缀文字   string | boolean (取值为git提交时间)
   docsDir: "docs", // 编辑的文件夹
@@ -22,9 +22,9 @@ module.exports = {
   // categoryText: '随笔', // 碎片化文章（_posts文件夹的文章）预设生成的分类值，默认'随笔'
 
   bodyBgImg: [
-    'http://cd-blog.oss-cn-shenzhen.aliyuncs.com/58f278aea996e8e7b43e3267c0a7372a.jpg',
-    'http://cd-blog.oss-cn-shenzhen.aliyuncs.com/b6b60933227b53a60bb1be5b25270daf.png',
-    'http://cd-blog.oss-cn-shenzhen.aliyuncs.com/46e6ebf6c3b3db020f8f3cacd9d9bbf8.jpg'
+    "http://cd-blog.oss-cn-shenzhen.aliyuncs.com/58f278aea996e8e7b43e3267c0a7372a.jpg",
+    "http://cd-blog.oss-cn-shenzhen.aliyuncs.com/b6b60933227b53a60bb1be5b25270daf.png",
+    "http://cd-blog.oss-cn-shenzhen.aliyuncs.com/46e6ebf6c3b3db020f8f3cacd9d9bbf8.jpg",
   ], // body背景大图，默认无。 单张图片 String || 多张图片 Array, 多张图片时每隔15秒换一张。
   // bodyBgImgOpacity: 0.5, // body背景图透明度，选值 0 ~ 1.0, 默认0.5
 
@@ -52,8 +52,7 @@ module.exports = {
   },
   blogger: {
     // 博主信息，显示在首页侧边栏
-    avatar:
-      "/assets/icon.jpg",
+    avatar: "/vuepress-interview-github/assets/icon.jpg",
     name: "CD_wOw",
     slogan: "内卷的行情，到不了的梦",
   },

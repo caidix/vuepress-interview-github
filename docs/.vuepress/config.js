@@ -12,7 +12,7 @@ module.exports = {
   markdown: {
     lineNumbers: true, // 代码行号
   },
-
+  base: '/vuepress-interview-github/',
   head,
   plugins,
   themeConfig,

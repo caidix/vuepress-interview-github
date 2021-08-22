@@ -2,7 +2,7 @@
 module.exports = [
   { text: "首页", link: "/" },
   {
-    text: "前端",
+    text: "🤖前端",
     link: "/web/", //目录页链接，此处link是vdoing主题新增的配置项，有二级导航时，可以点击一级导航跳到目录页
     items: [
       {
@@ -29,7 +29,7 @@ module.exports = [
     ],
   },
   {
-    text: "前端知识点",
+    text: "	🐳前端知识点",
     link: "/interview/",
     items: [
       { text: "HTMLCSS", link: "/interview/html/" },
@@ -43,7 +43,7 @@ module.exports = [
     ],
   },
   {
-    text: "工具方法",
+    text: "🔧工具方法",
     link: "/tools/",
     items: [
       { text: "技术文档", link: "/pages/9a7ee40fc232253e/" },
@@ -52,7 +52,7 @@ module.exports = [
     ],
   },
   {
-    text: "收藏",
+    text: "🍎收藏",
     link: "/pages/beb6c0bd8a66cea6/",
     items: [
       { text: "网站", link: "/pages/beb6c0bd8a66cea6/" },
@@ -61,7 +61,7 @@ module.exports = [
     ],
   },
   {
-    text: "索引",
+    text: "🌐索引",
     link: "/archives/",
     items: [
       { text: "分类", link: "/categories/" },
