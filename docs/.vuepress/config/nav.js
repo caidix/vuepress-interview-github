@@ -2,7 +2,21 @@
 module.exports = [
   { text: "首页", link: "/" },
   {
-    text: "🤖前端",
+    text: "	🐳前端知识点",
+    link: "/interview/",
+    items: [
+      { text: "HTMLCSS", link: "/interview/html/" },
+      { text: "JavaScript", link: "/interview/js/" },
+      { text: "Vue", link: "/interview/vue/" },
+      { text: "TypeScript", link: "/interview/ts/" },
+      { text: "React", link: "/interview/react/" },
+      { text: "Node", link: "/interview/node/" },
+      { text: "Webpack", link: "/interview/webpack/" },
+      { text: "浏览器网络", link: "/interview/browser/" },
+    ],
+  },
+  {
+    text: "🤖相关书籍",
     link: "/web/", //目录页链接，此处link是vdoing主题新增的配置项，有二级导航时，可以点击一级导航跳到目录页
     items: [
       {
@@ -26,20 +40,6 @@ module.exports = [
           { text: "《TypeScript》教程", link: "/note/typescript/" },
         ],
       },
-    ],
-  },
-  {
-    text: "	🐳前端知识点",
-    link: "/interview/",
-    items: [
-      { text: "HTMLCSS", link: "/interview/html/" },
-      { text: "JavaScript", link: "/interview/js/" },
-      { text: "Vue", link: "/interview/vue/" },
-      { text: "TypeScript", link: "/interview/ts/" },
-      { text: "React", link: "/interview/react/" },
-      { text: "Node", link: "/interview/node/" },
-      { text: "Webpack", link: "/interview/webpack/" },
-      { text: "浏览器网络", link: "/interview/browser/" },
     ],
   },
   {
