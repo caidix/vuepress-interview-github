@@ -22,22 +22,18 @@ module.exports = [
       {
         text: "学习笔记",
         items: [
-          { text: "《Vue》笔记", link: "/note/vue/" },
-          { text: "TypeScript笔记", link: "/pages/51afd6/" },
           {
             text: "《TypeScript 从零实现 axios》",
             link: "/note/typescript-axios/",
           },
           { text: "Webpack笔记", link: "/note/Webpack/" },
           { text: "小程序笔记", link: "/note/wx-miniprogram/" },
-          { text: "Nest框架笔记", link: "/note/nest/" },
         ],
       },
       {
         text: "JS/TS教程",
         items: [
           { text: "《现代JavaScript》教程", link: "/note/break/" },
-          { text: "《TypeScript》教程", link: "/note/typescript/" },
         ],
       },
     ],
