@@ -12,6 +12,7 @@ module.exports = [
       { text: "React", link: "/interview/react/" },
       { text: "Node", link: "/interview/node/" },
       { text: "Webpack", link: "/interview/webpack/" },
+      { text: "小程序", link: "/interview/miniprogram/" },
       { text: "浏览器网络", link: "/interview/browser/" },
     ],
   },
