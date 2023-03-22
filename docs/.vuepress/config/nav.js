@@ -12,6 +12,7 @@ module.exports = [
       { text: "React", link: "/interview/react/" },
       { text: "Node", link: "/interview/node/" },
       { text: "Webpack", link: "/interview/webpack/" },
+      { text: "Git", link: "/interview/git/" },
       { text: "小程序", link: "/interview/miniprogram/" },
       { text: "浏览器网络", link: "/interview/browser/" },
     ],
@@ -28,7 +29,6 @@ module.exports = [
             link: "/note/typescript-axios/",
           },
           { text: "Webpack笔记", link: "/note/Webpack/" },
-          { text: "小程序笔记", link: "/note/wx-miniprogram/" },
         ],
       },
       {
