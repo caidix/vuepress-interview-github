@@ -45,8 +45,6 @@ module.exports = [
     link: "/tools/",
     items: [
       { text: "技术文档", link: "/pages/9a7ee40fc232253e/" },
-      { text: "GitHub技巧", link: "/pages/4c778760be26d8b3/" },
-      { text: "常用方法", link: "/pages/6aa903/" },
     ],
   },
   {
