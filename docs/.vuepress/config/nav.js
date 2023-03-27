@@ -13,6 +13,7 @@ module.exports = [
       { text: "Node", link: "/interview/node/" },
       { text: "Webpack", link: "/interview/webpack/" },
       { text: "Git", link: "/interview/git/" },
+      { text: "Nestjs", link: "/interview/nestjs/" },
       { text: "小程序", link: "/interview/miniprogram/" },
       { text: "浏览器网络", link: "/interview/browser/" },
     ],
