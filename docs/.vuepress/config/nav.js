@@ -43,9 +43,9 @@ module.exports = [
   {
     text: "🔧工具方法",
     link: "/tools/",
-    items: [
-      { text: "技术文档", link: "/pages/9a7ee40fc232253e/" },
-    ],
+    // items: [
+    //   { text: "技术文档", link: "/pages/9a7ee40fc232253e/" },
+    // ],
   },
   {
     text: "🍎收藏",
